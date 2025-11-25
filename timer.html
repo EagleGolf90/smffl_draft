@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMFFL Draft Timer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+        }
+
+        .timer-container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .draft-info {
+            margin-bottom: 30px;
+        }
+
+        .on-clock {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .pick-info {
+            font-size: 1.5em;
+            opacity: 0.9;
+        }
+
+        .timer-display {
+            font-size: 8em;
+            font-weight: bold;
+            margin: 40px 0;
+            font-variant-numeric: tabular-nums;
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
+            transition: color 0.3s ease;
+        }
+
+        .timer-display.warning {
+            color: #ffd700;
+            animation: pulse 1s infinite;
+        }
+
+        .timer-display.danger {
+            color: #ff4444;
+            animation: pulse 0.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.05);
+            }
+        }
+
+        .status-message {
+            font-size: 1.8em;
+            margin-top: 20px;
+            font-weight: bold;
+            min-height: 40px;
+        }
+
+        .status-message.expired {
+            color: #ff4444;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50%, 100% {
+                opacity: 1;
+            }
+            25%, 75% {
+                opacity: 0.3;
+            }
+        }
+
+        .controls {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-start {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-pause {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn-reset {
+            background: #2196F3;
+            color: white;
+        }
+
+        .sound-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .sound-toggle button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .positions-tracker {
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .positions-tracker h3 {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .positions-grid {
+            display: grid;
+            gap: 5px;
+            font-size: 0.9em;
+        }
+
+        .positions-row {
+            display: grid;
+            grid-template-columns: 100px repeat(8, 1fr);
+            gap: 5px;
+        }
+
+        .positions-cell {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px;
+            text-align: center;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .positions-header-row .positions-cell {
+            background: rgba(255, 255, 255, 0.25);
+            font-weight: bold;
+        }
+
+        .team-cell {
+            text-align: left;
+            padding-left: 10px;
+        }
+
+        .active-team-row {
+            background: rgba(255, 215, 0, 0.2);
+            border-radius: 4px;
+        }
+
+        .positions-cell.complete {
+            background: rgba(76, 175, 80, 0.4);
+            color: #c8e6c9;
+        }
+
+        .positions-cell.partial {
+            background: rgba(255, 152, 0, 0.4);
+            color: #ffe0b2;
+        }
+
+        .positions-cell.empty {
+            background: rgba(244, 67, 54, 0.4);
+            color: #ffcdd2;
+        }
+    </style>
+</head>
+<body>
+    <div class="sound-toggle">
+        <button id="soundToggle">🔊 Sound ON</button>
+    </div>
+
+    <div class="timer-container">
+        <div class="draft-info">
+            <div class="on-clock">
+                ON THE CLOCK: <span id="teamName">Team 1</span>
+            </div>
+            <div class="pick-info">
+                Pick <span id="pickNumber">1</span> - Round <span id="roundNumber">1</span>
+            </div>
+        </div>
+
+        <div class="positions-tracker">
+            <h3>Roster Requirements</h3>
+            <div id="positionsGrid" class="positions-grid"></div>
+        </div>
+
+        <div class="timer-display" id="timerDisplay">2:00</div>
+
+        <div class="status-message" id="statusMessage"></div>
+
+        <div class="controls">
+            <button class="btn btn-start" id="startBtn">Start</button>
+            <button class="btn btn-pause" id="pauseBtn">Pause</button>
+            <button class="btn btn-reset" id="resetBtn">Reset</button>
+        </div>
+    </div>
+
+    <script>
+        // Timer state
+        let timeRemaining = 90; // default 90 seconds
+        let timerInterval = null;
+        let isRunning = false;
+        let soundEnabled = true;
+
+        // Roster requirements
+        const rosterRequirements = {
+            QB: 2,
+            RB: 4,
+            WR: 6,
+            TE: 2,
+            FLEX: 2,
+            DEF: 1,
+            K: 1,
+            BE: 6
+        };
+
+        // Get references to elements
+        const timerDisplay = document.getElementById('timerDisplay');
+        const statusMessage = document.getElementById('statusMessage');
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const soundToggle = document.getElementById('soundToggle');
+        const teamName = document.getElementById('teamName');
+        const pickNumber = document.getElementById('pickNumber');
+        const roundNumber = document.getElementById('roundNumber');
+
+        // Audio context for beeps
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playBeep(frequency = 800, duration = 200) {
+            if (!soundEnabled) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = frequency;
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration / 1000);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + duration / 1000);
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function updateDisplay() {
+            timerDisplay.textContent = formatTime(Math.max(0, timeRemaining));
+            
+            // Update styling based on time remaining
+            timerDisplay.classList.remove('warning', 'danger');
+            if (timeRemaining <= 10 && timeRemaining > 0) {
+                timerDisplay.classList.add('danger');
+            } else if (timeRemaining <= 30 && timeRemaining > 10) {
+                timerDisplay.classList.add('warning');
+            }
+            
+            // Update status message
+            if (timeRemaining <= 0) {
+                statusMessage.textContent = 'TIME EXPIRED!';
+                statusMessage.classList.add('expired');
+            } else {
+                statusMessage.textContent = '';
+                statusMessage.classList.remove('expired');
+            }
+        }
+
+        function startTimer() {
+            if (isRunning) return;
+            
+            isRunning = true;
+            startBtn.textContent = 'Running...';
+            startBtn.disabled = true;
+            
+            // Notify main window to start its timer
+            localStorage.setItem('draftTimerCommand', 'start');
+            localStorage.setItem('draftTimerCommand', ''); // Clear command
+            
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateDisplay();
+                
+                // Beep warnings
+                if (timeRemaining === 30) {
+                    playBeep(600, 200);
+                } else if (timeRemaining === 10) {
+                    playBeep(800, 300);
+                } else if (timeRemaining <= 3 && timeRemaining > 0) {
+                    playBeep(1000, 200);
+                } else if (timeRemaining === 0) {
+                    playBeep(400, 1000);
+                    pauseTimer();
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            if (!isRunning) return;
+            
+            isRunning = false;
+            clearInterval(timerInterval);
+            startBtn.textContent = 'Start';
+            startBtn.disabled = false;
+            
+            // Notify main window to pause its timer
+            localStorage.setItem('draftTimerCommand', 'pause');
+            localStorage.setItem('draftTimerCommand', ''); // Clear command
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            timeRemaining = parseInt(localStorage.getItem('draftTimeLimit')) || 120;
+            updateDisplay();
+            
+            // Notify main window to reset its timer
+            localStorage.setItem('draftTimerCommand', 'reset');
+            localStorage.setItem('draftTimerCommand', ''); // Clear command
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            soundToggle.textContent = soundEnabled ? '🔊 Sound ON' : '🔇 Sound OFF';
+        }
+
+        // Event listeners
+        startBtn.addEventListener('click', startTimer);
+        pauseBtn.addEventListener('click', pauseTimer);
+        resetBtn.addEventListener('click', resetTimer);
+        soundToggle.addEventListener('click', toggleSound);
+
+        // Update positions tracker
+        function updatePositionsTracker() {
+            const grid = document.getElementById('positionsGrid');
+            if (!grid) return;
+            
+            const draftState = JSON.parse(localStorage.getItem('draftState') || '{}');
+            const numTeams = draftState.numTeams || 12;
+            const picks = draftState.picks || [];
+            const currentPick = parseInt(localStorage.getItem('draftCurrentPick')) || 1;
+            const currentRound = parseInt(localStorage.getItem('draftCurrentRound')) || 1;
+            const snakeOrder = draftState.snakeOrder !== false;
+            
+            // Calculate current team
+            const pickInRound = ((currentPick - 1) % numTeams) + 1;
+            let currentTeam = pickInRound;
+            if (snakeOrder && currentRound % 2 === 0) {
+                currentTeam = numTeams - pickInRound + 1;
+            }
+            
+            // Calculate position counts for each team
+            const counts = {};
+            for (let i = 1; i <= numTeams; i++) {
+                counts[i] = { ...rosterRequirements };
+            }
+            
+            picks.forEach(pick => {
+                if (counts[pick.team] && counts[pick.team][pick.position] !== undefined) {
+                    counts[pick.team][pick.position] = Math.max(0, counts[pick.team][pick.position] - 1);
+                }
+            });
+            
+            const positions = Object.keys(rosterRequirements);
+            grid.innerHTML = '';
+            
+            // Header row
+            const headerRow = document.createElement('div');
+            headerRow.className = 'positions-row positions-header-row';
+            
+            const teamHeader = document.createElement('div');
+            teamHeader.className = 'positions-cell team-cell';
+            teamHeader.textContent = 'Team';
+            headerRow.appendChild(teamHeader);
+            
+            positions.forEach(pos => {
+                const posHeader = document.createElement('div');
+                posHeader.className = 'positions-cell';
+                posHeader.textContent = pos;
+                headerRow.appendChild(posHeader);
+            });
+            
+            grid.appendChild(headerRow);
+            
+            // Team rows
+            for (let i = 1; i <= numTeams; i++) {
+                const teamRow = document.createElement('div');
+                teamRow.className = 'positions-row';
+                if (i === currentTeam) {
+                    teamRow.classList.add('active-team-row');
+                }
+                
+                const teamCell = document.createElement('div');
+                teamCell.className = 'positions-cell team-cell';
+                teamCell.textContent = `Team ${i}`;
+                teamRow.appendChild(teamCell);
+                
+                positions.forEach(pos => {
+                    const posCell = document.createElement('div');
+                    posCell.className = 'positions-cell';
+                    const remaining = counts[i][pos];
+                    posCell.textContent = remaining;
+                    
+                    if (remaining === 0) {
+                        posCell.classList.add('complete');
+                    } else if (remaining === rosterRequirements[pos]) {
+                        posCell.classList.add('empty');
+                    } else {
+                        posCell.classList.add('partial');
+                    }
+                    
+                    teamRow.appendChild(posCell);
+                });
+                
+                grid.appendChild(teamRow);
+            }
+        }
+
+        // Listen for updates from main window
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'draftCurrentTeam') {
+                teamName.textContent = e.newValue || 'Team 1';
+            } else if (e.key === 'draftCurrentPick') {
+                pickNumber.textContent = e.newValue || '1';
+                updatePositionsTracker();
+            } else if (e.key === 'draftCurrentRound') {
+                roundNumber.textContent = e.newValue || '1';
+                updatePositionsTracker();
+            } else if (e.key === 'draftTimeLimit') {
+                timeRemaining = parseInt(e.newValue) || 90;
+                updateDisplay();
+            } else if (e.key === 'draftTimerCommand') {
+                if (e.newValue === 'start') startTimer();
+                else if (e.newValue === 'pause') pauseTimer();
+                else if (e.newValue === 'reset') resetTimer();
+            } else if (e.key === 'draftState') {
+                updatePositionsTracker();
+            }
+        });
+
+        // Initialize from localStorage
+        teamName.textContent = localStorage.getItem('draftCurrentTeam') || 'Team 1';
+        pickNumber.textContent = localStorage.getItem('draftCurrentPick') || '1';
+        roundNumber.textContent = localStorage.getItem('draftCurrentRound') || '1';
+        timeRemaining = parseInt(localStorage.getItem('draftTimeLimit')) || 90;
+        updateDisplay();
+        updatePositionsTracker();
+    </script>
+</body>
+</html>

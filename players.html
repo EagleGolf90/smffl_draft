@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMFFL Draft Players</title>
+    <link rel="stylesheet" href="css/players.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>🏈 Available Players</h1>
+                <a href="index.html" class="back-link">← Back to Draft</a>
+            </div>
+        </header>
+
+        <div class="filter-section">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="🔍 Search players..." />
+            </div>
+            <div class="position-filters">
+                <button class="filter-btn active" data-position="ALL">All</button>
+                <button class="filter-btn" data-position="QB">QB</button>
+                <button class="filter-btn" data-position="RB">RB</button>
+                <button class="filter-btn" data-position="WR">WR</button>
+                <button class="filter-btn" data-position="TE">TE</button>
+                <button class="filter-btn" data-position="DEF">DEF</button>
+                <button class="filter-btn" data-position="K">K</button>
+            </div>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-label">Total:</span>
+                <span id="totalPlayers" class="stat-value">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Showing:</span>
+                <span id="shownPlayers" class="stat-value">0</span>
+            </div>
+        </div>
+
+        <div class="players-container" id="playersContainer">
+            <!-- Players will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <script src="js/players.js"></script>
+</body>
+</html>

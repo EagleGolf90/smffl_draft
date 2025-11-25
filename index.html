@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMFFL Draft Board</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>SMFFL Draft Board</h1>
+                <div class="draft-info">
+                    <div class="info-item">
+                        <span class="label">Pick:</span>
+                        <span id="currentPick" class="value">1</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Round:</span>
+                        <span id="currentRound" class="value">1</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">On the Clock:</span>
+                        <span id="onTheClock" class="value team-highlight">Team 1</span>
+                    </div>
+                </div>
+                <div class="draft-input">
+                    <select id="positionSelect" class="player-dropdown">
+                        <option value="">Select a position...</option>
+                    </select>
+                    <select id="playerSelect" class="player-dropdown">
+                        <option value="">Select a player...</option>
+                    </select>
+                    <button id="addPick" class="btn btn-success">Add Pick</button>
+                    <button id="undoPick" class="btn btn-warning">Undo Last Pick</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-layout">
+            <div class="left-section">
+                <div class="draft-board">
+            <div class="teams-header">
+                <div class="team-column" data-team="1">
+                    <h3>White Panther</h3>
+                    <div class="team-picks" id="team1Picks"></div>
+                </div>
+                <div class="team-column" data-team="2">
+                    <h3>Vikes</h3>
+                    <div class="team-picks" id="team2Picks"></div>
+                </div>
+                <div class="team-column" data-team="3">
+                    <h3>Centurions</h3>
+                    <div class="team-picks" id="team3Picks"></div>
+                </div>
+                <div class="team-column" data-team="4">
+                    <h3>Team 4</h3>
+                    <div class="team-picks" id="team4Picks"></div>
+                </div>
+                <div class="team-column" data-team="5">
+                    <h3>Team 5</h3>
+                    <div class="team-picks" id="team5Picks"></div>
+                </div>
+                <div class="team-column" data-team="6">
+                    <h3>Team 6</h3>
+                    <div class="team-picks" id="team6Picks"></div>
+                </div>
+                <div class="team-column" data-team="7">
+                    <h3>Team 7</h3>
+                    <div class="team-picks" id="team7Picks"></div>
+                </div>
+                <div class="team-column" data-team="8">
+                    <h3>Team 8</h3>
+                    <div class="team-picks" id="team8Picks"></div>
+                </div>
+                <div class="team-column" data-team="9">
+                    <h3>Team 9</h3>
+                    <div class="team-picks" id="team9Picks"></div>
+                </div>
+                <div class="team-column" data-team="10">
+                    <h3>Team 10</h3>
+                    <div class="team-picks" id="team10Picks"></div>
+                </div>
+            </div>
+        </div>
+            </div>
+
+            <div class="right-section">
+                <div class="positions-tracker">
+                    <h2>Roster Requirements</h2>
+                    <div id="positionsGrid" class="positions-grid"></div>
+                </div>
+
+                <div class="timer-section">
+                    <h2>Draft Timer</h2>
+                    <div class="timer-display-large">
+                        <span id="timerDisplay" class="timer-value">2:00</span>
+                    </div>
+                    <div class="controls">
+                        <button id="startTimer" class="btn btn-primary">Start Timer</button>
+                        <button id="pauseTimer" class="btn btn-secondary">Pause</button>
+                        <button id="resetTimer" class="btn btn-secondary">Reset</button>
+                        <button id="openTimerWindow" class="btn btn-info">Open Timer Window</button>
+                    </div>
+                </div>
+
+                <div class="settings">
+                    <h3>Draft Settings</h3>
+                    <label>
+                        Number of Teams:
+                        <input type="number" id="numTeams" min="2" max="20" value="12" />
+                    </label>
+                    <label>
+                        Pick Time Limit (seconds):
+                        <input type="number" id="timeLimit" min="30" max="300" value="120" />
+                    </label>
+                    <label>
+                        <input type="checkbox" id="snakeOrder" checked />
+                        Snake Draft Order
+                    </label>
+                    <button id="applySettings" class="btn btn-primary">Apply Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/draft.js"></script>
+</body>
+</html>
