@@ -554,20 +554,6 @@ window.addEventListener('storage', (e) => {
     }
 });
 
-// Function to get all team names into an array and print
-// function getAllTeamNames() {
-//     const teamNames = [];
-//     for (let i = 1; i <= draftState.numTeams; i++) {
-//         teamNames.push(`Team ${i}`);
-//     }
-//     console.log('All Team Names:', teamNames);
-//     return teamNames;
-// }
-
-// Call the function to print all team names
-// const teams = getAllTeamNames();
-// console.log('Teams Array:', teams);
-
 const teamNames = ['White Panther', 'Vikes', 'Centurions', 'Bengals', 'Pepsi 40024', 'Rainbows', 'Cards', 'Peruvian Ambush', 'Lord of Wiz', 'Rhino Chasers', 'Fearless Trojans', 'Shockers'];
 
 // Calculate positions remaining for each team

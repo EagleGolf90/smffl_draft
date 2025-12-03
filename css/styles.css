@@ -547,7 +547,7 @@ option.drafted {
         width: 100%;
     }
     
-    .teams-header {
+    .team-row {
         grid-template-columns: 1fr;
     }
 }
