@@ -247,10 +247,66 @@
 
     <script>
         // Timer state
-        let timeRemaining = 90; // default 90 seconds
+        let timeRemaining = 120; // default 120 seconds (match draft.js)
         let timerInterval = null;
         let isRunning = false;
         let soundEnabled = true;
+        let timerChannel = null;
+        let lastSyncTime = Date.now();
+
+        // Initialize BroadcastChannel for timer sync
+        try {
+            timerChannel = new BroadcastChannel('draft-timer');
+            
+            // Listen for messages from main window
+            timerChannel.onmessage = (event) => {
+                const { action, timeRemaining: newTime, teamName: newTeamName, pickNumber, roundNumber } = event.data;
+                
+                if (action === 'start') {
+                    if (newTime !== undefined) {
+                        timeRemaining = newTime;
+                        updateDisplay();
+                    }
+                    if (!isRunning) {
+                        startTimerInternal();
+                    }
+                } else if (action === 'pause') {
+                    if (newTime !== undefined) {
+                        timeRemaining = newTime;
+                        updateDisplay();
+                    }
+                    if (isRunning) {
+                        pauseTimerInternal();
+                    }
+                } else if (action === 'reset') {
+                    if (newTime !== undefined) {
+                        timeRemaining = newTime;
+                    }
+                    resetTimerInternal();
+                } else if (action === 'sync') {
+                    // Force sync time to prevent drift
+                    if (newTime !== undefined) {
+                        timeRemaining = newTime;
+                        updateDisplay();
+                        lastSyncTime = Date.now();
+                    }
+                } else if (action === 'update-team') {
+                    // Update team info from main window
+                    if (newTeamName !== undefined) {
+                        document.getElementById('teamName').textContent = newTeamName;
+                    }
+                    if (pickNumber !== undefined) {
+                        document.getElementById('pickNumber').textContent = pickNumber;
+                    }
+                    if (roundNumber !== undefined) {
+                        document.getElementById('roundNumber').textContent = roundNumber;
+                    }
+                    updatePositionsTracker();
+                }
+            };
+        } catch (e) {
+            console.log('BroadcastChannel not supported, using localStorage fallback');
+        }
 
         // Roster requirements
         const rosterRequirements = {
@@ -324,16 +380,19 @@
             }
         }
 
-        function startTimer() {
+        function startTimerInternal() {
             if (isRunning) return;
+            
+            // Reset to full time limit if timer has expired or is at 0
+            if (timeRemaining <= 0) {
+                timeRemaining = parseInt(localStorage.getItem('draftTimeLimit')) || 120;
+                updateDisplay();
+            }
             
             isRunning = true;
             startBtn.textContent = 'Running...';
             startBtn.disabled = true;
-            
-            // Notify main window to start its timer
-            localStorage.setItem('draftTimerCommand', 'start');
-            localStorage.setItem('draftTimerCommand', ''); // Clear command
+            lastSyncTime = Date.now();
             
             timerInterval = setInterval(() => {
                 timeRemaining--;
@@ -348,32 +407,58 @@
                     playBeep(1000, 200);
                 } else if (timeRemaining === 0) {
                     playBeep(400, 1000);
-                    pauseTimer();
+                    pauseTimerInternal();
                 }
             }, 1000);
         }
 
-        function pauseTimer() {
+        function startTimer() {
+            // Reset to full time limit if timer has expired or is at 0
+            if (timeRemaining <= 0) {
+                timeRemaining = parseInt(localStorage.getItem('draftTimeLimit')) || 120;
+                updateDisplay();
+            }
+            
+            startTimerInternal();
+            // Notify main window
+            if (timerChannel) {
+                timerChannel.postMessage({ action: 'start', timeRemaining });
+            }
+            localStorage.setItem('draftTimerCommand', 'start');
+        }
+
+        function pauseTimerInternal() {
             if (!isRunning) return;
             
             isRunning = false;
             clearInterval(timerInterval);
             startBtn.textContent = 'Start';
             startBtn.disabled = false;
-            
-            // Notify main window to pause its timer
+        }
+
+        function pauseTimer() {
+            pauseTimerInternal();
+            // Notify main window
+            if (timerChannel) {
+                timerChannel.postMessage({ action: 'pause', timeRemaining });
+            }
             localStorage.setItem('draftTimerCommand', 'pause');
-            localStorage.setItem('draftTimerCommand', ''); // Clear command
+            localStorage.setItem('draftTimeRemaining', timeRemaining.toString());
+        }
+
+        function resetTimerInternal() {
+            pauseTimerInternal();
+            timeRemaining = parseInt(localStorage.getItem('draftTimeLimit')) || 120;
+            updateDisplay();
         }
 
         function resetTimer() {
-            pauseTimer();
-            timeRemaining = parseInt(localStorage.getItem('draftTimeLimit')) || 120;
-            updateDisplay();
-            
-            // Notify main window to reset its timer
+            resetTimerInternal();
+            // Notify main window
+            if (timerChannel) {
+                timerChannel.postMessage({ action: 'reset', timeRemaining });
+            }
             localStorage.setItem('draftTimerCommand', 'reset');
-            localStorage.setItem('draftTimerCommand', ''); // Clear command
         }
 
         function toggleSound() {
@@ -473,7 +558,7 @@
             }
         }
 
-        // Listen for updates from main window
+        // Listen for updates from main window (localStorage fallback)
         window.addEventListener('storage', (e) => {
             if (e.key === 'draftCurrentTeam') {
                 teamName.textContent = e.newValue || 'Team 1';
@@ -484,24 +569,62 @@
                 roundNumber.textContent = e.newValue || '1';
                 updatePositionsTracker();
             } else if (e.key === 'draftTimeLimit') {
-                timeRemaining = parseInt(e.newValue) || 90;
-                updateDisplay();
+                // Don't update if timer is running
+                if (!isRunning) {
+                    timeRemaining = parseInt(e.newValue) || 120;
+                    updateDisplay();
+                }
+            } else if (e.key === 'draftTimeRemaining') {
+                // Sync time remaining (fallback for browsers without BroadcastChannel)
+                if (!timerChannel) {
+                    const newTime = parseInt(e.newValue);
+                    if (!isNaN(newTime)) {
+                        timeRemaining = newTime;
+                        updateDisplay();
+                    }
+                }
             } else if (e.key === 'draftTimerCommand') {
-                if (e.newValue === 'start') startTimer();
-                else if (e.newValue === 'pause') pauseTimer();
-                else if (e.newValue === 'reset') resetTimer();
+                // Fallback for browsers without BroadcastChannel
+                if (!timerChannel) {
+                    const storedTime = parseInt(localStorage.getItem('draftTimeRemaining'));
+                    if (!isNaN(storedTime)) {
+                        timeRemaining = storedTime;
+                    }
+                    
+                    if (e.newValue === 'start' && !isRunning) {
+                        startTimerInternal();
+                    } else if (e.newValue === 'pause' && isRunning) {
+                        pauseTimerInternal();
+                    } else if (e.newValue === 'reset') {
+                        resetTimerInternal();
+                    }
+                }
             } else if (e.key === 'draftState') {
                 updatePositionsTracker();
             }
         });
 
         // Initialize from localStorage
-        teamName.textContent = localStorage.getItem('draftCurrentTeam') || 'Team 1';
-        pickNumber.textContent = localStorage.getItem('draftCurrentPick') || '1';
-        roundNumber.textContent = localStorage.getItem('draftCurrentRound') || '1';
-        timeRemaining = parseInt(localStorage.getItem('draftTimeLimit')) || 90;
-        updateDisplay();
-        updatePositionsTracker();
+        function initializeTimer() {
+            teamName.textContent = localStorage.getItem('draftCurrentTeam') || 'Team 1';
+            pickNumber.textContent = localStorage.getItem('draftCurrentPick') || '1';
+            roundNumber.textContent = localStorage.getItem('draftCurrentRound') || '1';
+            
+            const storedTimeRemaining = localStorage.getItem('draftTimeRemaining');
+            const storedTimeLimit = localStorage.getItem('draftTimeLimit');
+            timeRemaining = storedTimeRemaining ? parseInt(storedTimeRemaining) : (storedTimeLimit ? parseInt(storedTimeLimit) : 120);
+            
+            updateDisplay();
+            updatePositionsTracker();
+            
+            // Request sync from main window
+            if (timerChannel) {
+                timerChannel.postMessage({ action: 'request-sync' });
+            }
+        }
+
+        // Initialize when page loads
+        initializeTimer();
     </script>
 </body>
 </html>

@@ -26,14 +26,15 @@
                     </div>
                 </div>
                 <div class="draft-input">
-                    <select id="positionSelect" class="player-dropdown">
+                    <select id="positionSelect" name="positionSelect" class="player-dropdown">
                         <option value="">Select a position...</option>
                     </select>
-                    <select id="playerSelect" class="player-dropdown">
+                    <select id="playerSelect" name="playerSelect" class="player-dropdown">
                         <option value="">Select a player...</option>
                     </select>
                     <button id="addPick" class="btn btn-success">Add Pick</button>
                     <button id="undoPick" class="btn btn-warning">Undo Last Pick</button>
+                    <button id="resetDraft" class="btn btn-danger">Reset Draft</button>
                 </div>
             </div>
         </header>
@@ -42,45 +43,57 @@
             <div class="left-section">
                 <div class="draft-board">
             <div class="teams-header">
-                <div class="team-column" data-team="1">
-                    <h3>White Panther</h3>
-                    <div class="team-picks" id="team1Picks"></div>
+                <div class="team-row">
+                    <div class="team-column" data-team="1">
+                        <h3>White Panther</h3>
+                        <div class="team-picks" id="team1Picks"></div>
+                    </div>
+                    <div class="team-column" data-team="2">
+                        <h3>Vikes</h3>
+                        <div class="team-picks" id="team2Picks"></div>
+                    </div>
+                    <div class="team-column" data-team="3">
+                        <h3>Centurions</h3>
+                        <div class="team-picks" id="team3Picks"></div>
+                    </div>
+                    <div class="team-column" data-team="4">
+                        <h3>Bengals</h3>
+                        <div class="team-picks" id="team4Picks"></div>
+                    </div>
+                    <div class="team-column" data-team="5">
+                        <h3>Pepsi 40024</h3>
+                        <div class="team-picks" id="team5Picks"></div>
+                    </div>
+                    <div class="team-column" data-team="6">
+                        <h3>Rainbows</h3>
+                        <div class="team-picks" id="team6Picks"></div>
+                    </div>
                 </div>
-                <div class="team-column" data-team="2">
-                    <h3>Vikes</h3>
-                    <div class="team-picks" id="team2Picks"></div>
-                </div>
-                <div class="team-column" data-team="3">
-                    <h3>Centurions</h3>
-                    <div class="team-picks" id="team3Picks"></div>
-                </div>
-                <div class="team-column" data-team="4">
-                    <h3>Team 4</h3>
-                    <div class="team-picks" id="team4Picks"></div>
-                </div>
-                <div class="team-column" data-team="5">
-                    <h3>Team 5</h3>
-                    <div class="team-picks" id="team5Picks"></div>
-                </div>
-                <div class="team-column" data-team="6">
-                    <h3>Team 6</h3>
-                    <div class="team-picks" id="team6Picks"></div>
-                </div>
-                <div class="team-column" data-team="7">
-                    <h3>Team 7</h3>
-                    <div class="team-picks" id="team7Picks"></div>
-                </div>
-                <div class="team-column" data-team="8">
-                    <h3>Team 8</h3>
-                    <div class="team-picks" id="team8Picks"></div>
-                </div>
-                <div class="team-column" data-team="9">
-                    <h3>Team 9</h3>
-                    <div class="team-picks" id="team9Picks"></div>
-                </div>
-                <div class="team-column" data-team="10">
-                    <h3>Team 10</h3>
-                    <div class="team-picks" id="team10Picks"></div>
+                <div class="team-row">
+                    <div class="team-column" data-team="7">
+                        <h3>Cards</h3>
+                        <div class="team-picks" id="team7Picks"></div>
+                    </div>
+                    <div class="team-column" data-team="8">
+                        <h3>Peruvian Ambush</h3>
+                        <div class="team-picks" id="team8Picks"></div>
+                    </div>
+                    <div class="team-column" data-team="9">
+                        <h3>Lord of Wiz</h3>
+                        <div class="team-picks" id="team9Picks"></div>
+                    </div>
+                    <div class="team-column" data-team="10">
+                        <h3>Rhino Chasers</h3>
+                        <div class="team-picks" id="team10Picks"></div>
+                    </div>
+                    <div class="team-column" data-team="11">
+                        <h3>Fearless Trojans</h3>
+                        <div class="team-picks" id="team11Picks"></div>
+                    </div>
+                    <div class="team-column" data-team="12">
+                        <h3>Shockers</h3>
+                        <div class="team-picks" id="team12Picks"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -125,6 +138,7 @@
         </div>
     </div>
 
+    <script src="js/availablePlayers.js"></script>
     <script src="js/draft.js"></script>
 </body>
 </html>

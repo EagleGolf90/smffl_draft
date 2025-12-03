@@ -1,132 +1,13 @@
-// Available Players List
-const availablePlayers = [
-    { name: "Christian McCaffrey", position: "RB" },
-    { name: "Tyreek Hill", position: "WR" },
-    { name: "CeeDee Lamb", position: "WR" },
-    { name: "Bijan Robinson", position: "RB" },
-    { name: "Breece Hall", position: "RB" },
-    { name: "Amon-Ra St. Brown", position: "WR" },
-    { name: "Justin Jefferson", position: "WR" },
-    { name: "Ja'Marr Chase", position: "WR" },
-    { name: "Saquon Barkley", position: "RB" },
-    { name: "Josh Allen", position: "QB" },
-    { name: "Patrick Mahomes", position: "QB" },
-    { name: "Lamar Jackson", position: "QB" },
-    { name: "Jalen Hurts", position: "QB" },
-    { name: "A.J. Brown", position: "WR" },
-    { name: "Garrett Wilson", position: "WR" },
-    { name: "Puka Nacua", position: "WR" },
-    { name: "Travis Kelce", position: "TE" },
-    { name: "Sam LaPorta", position: "TE" },
-    { name: "Derrick Henry", position: "RB" },
-    { name: "De'Von Achane", position: "RB" },
-    { name: "Jonathan Taylor", position: "RB" },
-    { name: "Jahmyr Gibbs", position: "RB" },
-    { name: "Kenneth Walker III", position: "RB" },
-    { name: "Kyren Williams", position: "RB" },
-    { name: "Davante Adams", position: "WR" },
-    { name: "Stefon Diggs", position: "WR" },
-    { name: "Drake London", position: "WR" },
-    { name: "Deebo Samuel", position: "WR" },
-    { name: "Chris Olave", position: "WR" },
-    { name: "Mike Evans", position: "WR" },
-    { name: "DJ Moore", position: "WR" },
-    { name: "Nico Collins", position: "WR" },
-    { name: "Brandon Aiyuk", position: "WR" },
-    { name: "Mark Andrews", position: "TE" },
-    { name: "Trey McBride", position: "TE" },
-    { name: "Dalton Kincaid", position: "TE" },
-    { name: "George Kittle", position: "TE" },
-    { name: "Kyle Pitts", position: "TE" },
-    { name: "Evan Engram", position: "TE" },
-    { name: "David Njoku", position: "TE" },
-    { name: "Joe Burrow", position: "QB" },
-    { name: "C.J. Stroud", position: "QB" },
-    { name: "Dak Prescott", position: "QB" },
-    { name: "Brock Purdy", position: "QB" },
-    { name: "Trevor Lawrence", position: "QB" },
-    { name: "Justin Herbert", position: "QB" },
-    { name: "Tua Tagovailoa", position: "QB" },
-    { name: "Anthony Richardson", position: "QB" },
-    { name: "Jordan Love", position: "QB" },
-    { name: "Geno Smith", position: "QB" },
-    { name: "Isiah Pacheco", position: "RB" },
-    { name: "James Cook", position: "RB" },
-    { name: "Rachaad White", position: "RB" },
-    { name: "Najee Harris", position: "RB" },
-    { name: "Travis Etienne Jr.", position: "RB" },
-    { name: "Aaron Jones", position: "RB" },
-    { name: "Alvin Kamara", position: "RB" },
-    { name: "Rhamondre Stevenson", position: "RB" },
-    { name: "Joe Mixon", position: "RB" },
-    { name: "D'Andre Swift", position: "RB" },
-    { name: "Javonte Williams", position: "RB" },
-    { name: "Tony Pollard", position: "RB" },
-    { name: "Zach Charbonnet", position: "RB" },
-    { name: "James Conner", position: "RB" },
-    { name: "Marvin Harrison Jr.", position: "WR" },
-    { name: "Cooper Kupp", position: "WR" },
-    { name: "Amari Cooper", position: "WR" },
-    { name: "DK Metcalf", position: "WR" },
-    { name: "Terry McLaurin", position: "WR" },
-    { name: "Calvin Ridley", position: "WR" },
-    { name: "Zay Flowers", position: "WR" },
-    { name: "Christian Kirk", position: "WR" },
-    { name: "George Pickens", position: "WR" },
-    { name: "Keenan Allen", position: "WR" },
-    { name: "Marquise Brown", position: "WR" },
-    { name: "Jaxon Smith-Njigba", position: "WR" },
-    { name: "Michael Pittman Jr.", position: "WR" },
-    { name: "DeVonta Smith", position: "WR" },
-    { name: "Diontae Johnson", position: "WR" },
-    { name: "Tyler Lockett", position: "WR" },
-    { name: "Jaylen Waddle", position: "WR" },
-    { name: "Courtland Sutton", position: "WR" },
-    { name: "Jordan Addison", position: "WR" },
-    { name: "Rashee Rice", position: "WR" },
-    { name: "Tank Dell", position: "WR" },
-    { name: "Romeo Doubs", position: "WR" },
-    { name: "Jakobi Meyers", position: "WR" },
-    { name: "Dallas Goedert", position: "TE" },
-    { name: "T.J. Hockenson", position: "TE" },
-    { name: "Jake Ferguson", position: "TE" },
-    { name: "Chigoziem Okonkwo", position: "TE" },
-    { name: "Tyler Conklin", position: "TE" },
-    { name: "Taysom Hill", position: "TE" },
-    { name: "Cole Kmet", position: "TE" },
-    { name: "Hunter Henry", position: "TE" },
-    { name: "Jonnu Smith", position: "TE" },
-    { name: "Luke Musgrave", position: "TE" },
-    { name: "49ers", position: "DEF" },
-    { name: "Ravens", position: "DEF" },
-    { name: "Cowboys", position: "DEF" },
-    { name: "Browns", position: "DEF" },
-    { name: "Bills", position: "DEF" },
-    { name: "Jets", position: "DEF" },
-    { name: "Chiefs", position: "DEF" },
-    { name: "Saints", position: "DEF" },
-    { name: "Steelers", position: "DEF" },
-    { name: "Eagles", position: "DEF" },
-    { name: "Justin Tucker", position: "K" },
-    { name: "Harrison Butker", position: "K" },
-    { name: "Jake Moody", position: "K" },
-    { name: "Tyler Bass", position: "K" },
-    { name: "Brandon Aubrey", position: "K" },
-    { name: "Jason Sanders", position: "K" },
-    { name: "Evan McPherson", position: "K" },
-    { name: "Younghoe Koo", position: "K" },
-    { name: "Cameron Dicker", position: "K" },
-    { name: "Jake Elliott", position: "K" }
-];
+// Keep a master list of all players (never modified)
+const allPlayers = [...availablePlayers];
 
 // Roster requirements
 const rosterRequirements = {
-    QB: 1,
-    RB: 2,
-    WR: 3,
-    TE: 1,
-    K: 1,
-    DEF: 1
+    QB: 2,
+    RB: 4,
+    WRTE: 4,
+    K: 2,
+    DEF: 2
 };
 
 // Draft State
@@ -138,11 +19,46 @@ let draftState = {
     currentRound: 1,
     picks: [],
     isTimerRunning: false,
-    timeRemaining: 90,
-    availablePlayers: [...availablePlayers]
+    timeRemaining: 120,
+    availablePlayers: [...availablePlayers],
+    draftedPlayers: [] // Track drafted players by name
 };
 
 let timerInterval = null;
+let timerChannel = null;
+
+// Initialize BroadcastChannel for timer sync
+try {
+    timerChannel = new BroadcastChannel('draft-timer');
+    
+    // Listen for messages from timer window
+    timerChannel.onmessage = (event) => {
+        const { action, timeRemaining: newTime } = event.data;
+        
+        if (action === 'start') {
+            if (!draftState.isTimerRunning) {
+                startTimer();
+            }
+        } else if (action === 'pause') {
+            if (draftState.isTimerRunning) {
+                pauseTimer();
+            }
+        } else if (action === 'reset') {
+            resetTimer();
+        } else if (action === 'request-sync') {
+            // Timer window is requesting current state
+            if (timerChannel) {
+                const syncAction = draftState.isTimerRunning ? 'sync' : 'reset';
+                timerChannel.postMessage({ 
+                    action: syncAction, 
+                    timeRemaining: draftState.timeRemaining 
+                });
+            }
+        }
+    };
+} catch (e) {
+    console.log('BroadcastChannel not supported, using localStorage fallback');
+}
 
 // Initialize the draft board
 function initializeDraft() {
@@ -161,13 +77,23 @@ function populatePositionDropdown() {
     const dropdown = document.getElementById('positionSelect');
     dropdown.innerHTML = '<option value="">Select a position...</option>';
     
-    // Get unique positions from available players
-    const positions = [...new Set(draftState.availablePlayers.map(p => p.position))].sort();
+    // Get unique positions from ALL players
+    const positions = [...new Set(allPlayers.map(p => p.position))].sort();
     
     positions.forEach(position => {
         const option = document.createElement('option');
         option.value = position;
-        option.textContent = position;
+        // Show count of available players for each position
+        const availableCount = draftState.availablePlayers.filter(p => p.position === position).length;
+        const totalCount = allPlayers.filter(p => p.position === position).length;
+        option.textContent = `${position} (${availableCount}/${totalCount})`;
+        
+        // If all players in this position are drafted, mark it
+        if (availableCount === 0) {
+            option.classList.add('drafted');
+            option.disabled = true;
+        }
+        
         dropdown.appendChild(option);
     });
 }
@@ -181,17 +107,27 @@ function populatePlayerDropdown(selectedPosition = null) {
         return; // Don't populate players until a position is selected
     }
     
-    // Filter players by selected position
-    const filteredPlayers = draftState.availablePlayers.filter(p => p.position === selectedPosition);
+    // Get ALL players for selected position (from master list)
+    const allPositionPlayers = allPlayers.filter(p => p.position === selectedPosition);
     
     // Sort by name
-    const sortedPlayers = [...filteredPlayers].sort((a, b) => a.name.localeCompare(b.name));
+    const sortedPlayers = [...allPositionPlayers].sort((a, b) => a.name.localeCompare(b.name));
     
     sortedPlayers.forEach((player, index) => {
         const option = document.createElement('option');
-        // Store the actual player name as value for easier lookup
         option.value = player.name;
-        option.textContent = player.name;
+        
+        // Check if player is drafted
+        const isDrafted = draftState.draftedPlayers.includes(player.name);
+        
+        if (isDrafted) {
+            option.textContent = `${player.name} (DRAFTED)`;
+            option.classList.add('drafted');
+            option.disabled = true;
+        } else {
+            option.textContent = player.name;
+        }
+        
         dropdown.appendChild(option);
     });
 }
@@ -202,6 +138,13 @@ function loadDraftState() {
     if (saved) {
         const parsed = JSON.parse(saved);
         draftState = { ...draftState, ...parsed };
+        
+        // Ensure currentPick is at least 1
+        draftState.currentPick = 1;
+        
+        // Always ensure timer is set to 120 seconds (2 minutes)
+        draftState.timeLimit = 120;
+        draftState.timeRemaining = 120;
     }
 }
 
@@ -214,10 +157,12 @@ function saveDraftState() {
 // Sync specific values to localStorage for timer window
 function syncToLocalStorage() {
     const currentTeam = getCurrentTeam();
-    localStorage.setItem('draftCurrentTeam', `Team ${currentTeam}`);
+    const teamName = teamNames[currentTeam - 1] || `Team ${currentTeam}`;
+    localStorage.setItem('draftCurrentTeam', teamName);
     localStorage.setItem('draftCurrentPick', draftState.currentPick.toString());
     localStorage.setItem('draftCurrentRound', draftState.currentRound.toString());
     localStorage.setItem('draftTimeLimit', draftState.timeLimit.toString());
+    localStorage.setItem('draftTimeRemaining', draftState.timeRemaining.toString());
 }
 
 // Calculate which team is currently picking
@@ -238,7 +183,19 @@ function getCurrentTeam() {
 function updateDraftInfo() {
     document.getElementById('currentPick').textContent = draftState.currentPick;
     document.getElementById('currentRound').textContent = draftState.currentRound;
-    document.getElementById('onTheClock').textContent = `Team ${getCurrentTeam()}`;
+    const currentTeam = getCurrentTeam();
+    const teamName = teamNames[currentTeam - 1] || `Team ${currentTeam}`;
+    document.getElementById('onTheClock').textContent = teamName;
+    
+    // Broadcast team change to other windows
+    if (timerChannel) {
+        timerChannel.postMessage({ 
+            action: 'update-team', 
+            teamName: teamName,
+            pickNumber: draftState.currentPick,
+            roundNumber: draftState.currentRound
+        });
+    }
     
     // Highlight active team
     document.querySelectorAll('.team-column').forEach(col => {
@@ -268,8 +225,9 @@ function updateTeamColumns() {
         const teamCol = document.createElement('div');
         teamCol.className = 'team-column';
         teamCol.setAttribute('data-team', i);
+        const teamName = teamNames[i - 1] || `Team ${i}`;
         teamCol.innerHTML = `
-            <h3>Team ${i}</h3>
+            <h3>${teamName}</h3>
             <div class="team-picks" id="team${i}Picks"></div>
         `;
         teamsContainer.appendChild(teamCol);
@@ -312,6 +270,9 @@ function addPick() {
     
     draftState.picks.push(pick);
     
+    // Add to drafted players list
+    draftState.draftedPlayers.push(player.name);
+    
     // Remove player from available players
     draftState.availablePlayers.splice(playerIndex, 1);
     
@@ -330,8 +291,9 @@ function addPick() {
     
     // Refresh dropdowns and reset selections
     populatePositionDropdown();
-    positionDropdown.value = '';
-    populatePlayerDropdown();
+    populatePlayerDropdown(); // Reset player dropdown to show only default option
+    positionDropdown.value = ''; // Reset position to "Select a position..."
+    playerDropdown.value = ''; // Reset player to blank
     positionDropdown.focus();
 }
 
@@ -371,6 +333,12 @@ function undoLastPick() {
     
     const lastPick = draftState.picks.pop();
     
+    // Remove from drafted players list
+    const draftedIndex = draftState.draftedPlayers.indexOf(lastPick.player);
+    if (draftedIndex > -1) {
+        draftState.draftedPlayers.splice(draftedIndex, 1);
+    }
+    
     // Add player back to available players
     draftState.availablePlayers.push({
         name: lastPick.player,
@@ -380,6 +348,28 @@ function undoLastPick() {
     // Update current pick and round
     draftState.currentPick = lastPick.pickNumber;
     draftState.currentRound = lastPick.round;
+    
+    renderAllPicks();
+    updateDraftInfo();
+    updatePositionsTracker();
+    populatePositionDropdown();
+    document.getElementById('positionSelect').value = '';
+    populatePlayerDropdown();
+    saveDraftState();
+    resetTimer();
+}
+
+// Reset the entire draft
+function resetDraft() {
+    const confirmReset = confirm('Are you sure you want to reset the entire draft? This will clear all picks and cannot be undone.');
+    if (!confirmReset) return;
+    
+    draftState.currentPick = 1;
+    draftState.currentRound = 1;
+    draftState.picks = [];
+    draftState.timeRemaining = draftState.timeLimit;
+    draftState.availablePlayers = [...availablePlayers];
+    draftState.draftedPlayers = [];
     
     renderAllPicks();
     updateDraftInfo();
@@ -405,12 +395,30 @@ function updateTimerDisplay() {
 function startTimer() {
     if (draftState.isTimerRunning) return;
     
+    // Reset to full time limit if timer has expired or is at 0
+    if (draftState.timeRemaining <= 0) {
+        draftState.timeRemaining = draftState.timeLimit;
+        updateTimerDisplay();
+    }
+    
     draftState.isTimerRunning = true;
     localStorage.setItem('draftTimerCommand', 'start');
+    localStorage.setItem('draftTimeRemaining', draftState.timeRemaining.toString());
+    
+    // Broadcast to other windows
+    if (timerChannel) {
+        timerChannel.postMessage({ action: 'start', timeRemaining: draftState.timeRemaining });
+    }
     
     timerInterval = setInterval(() => {
         draftState.timeRemaining--;
         updateTimerDisplay();
+        localStorage.setItem('draftTimeRemaining', draftState.timeRemaining.toString());
+        
+        // Broadcast sync update every second to prevent drift
+        if (timerChannel) {
+            timerChannel.postMessage({ action: 'sync', timeRemaining: draftState.timeRemaining });
+        }
         
         if (draftState.timeRemaining <= 0) {
             pauseTimer();
@@ -424,6 +432,12 @@ function pauseTimer() {
     draftState.isTimerRunning = false;
     clearInterval(timerInterval);
     localStorage.setItem('draftTimerCommand', 'pause');
+    localStorage.setItem('draftTimeRemaining', draftState.timeRemaining.toString());
+    
+    // Broadcast to other windows
+    if (timerChannel) {
+        timerChannel.postMessage({ action: 'pause', timeRemaining: draftState.timeRemaining });
+    }
 }
 
 function resetTimer() {
@@ -431,6 +445,12 @@ function resetTimer() {
     draftState.timeRemaining = draftState.timeLimit;
     updateTimerDisplay();
     localStorage.setItem('draftTimerCommand', 'reset');
+    localStorage.setItem('draftTimeRemaining', draftState.timeRemaining.toString());
+    
+    // Broadcast to other windows
+    if (timerChannel) {
+        timerChannel.postMessage({ action: 'reset', timeRemaining: draftState.timeRemaining });
+    }
 }
 
 // Apply settings
@@ -491,6 +511,8 @@ document.getElementById('addPick').addEventListener('click', addPick);
 
 document.getElementById('positionSelect').addEventListener('change', (e) => {
     const selectedPosition = e.target.value;
+    const playerDropdown = document.getElementById('playerSelect');
+    playerDropdown.value = ''; // Reset player selection when position changes
     populatePlayerDropdown(selectedPosition);
 });
 
@@ -501,6 +523,8 @@ document.getElementById('playerSelect').addEventListener('keypress', (e) => {
 });
 
 document.getElementById('undoPick').addEventListener('click', undoLastPick);
+
+document.getElementById('resetDraft').addEventListener('click', resetDraft);
 
 document.getElementById('startTimer').addEventListener('click', startTimer);
 document.getElementById('pauseTimer').addEventListener('click', pauseTimer);
@@ -544,7 +568,7 @@ window.addEventListener('storage', (e) => {
 // const teams = getAllTeamNames();
 // console.log('Teams Array:', teams);
 
-teamNames = ['White Panthers', 'Vikes', 'Centurions', 'Red Raiders', 'Sharks', 'Warriors', 'Dragons', 'Titans', 'Wolves', 'Hawks', 'Raptors', 'Bulldogs'];
+const teamNames = ['White Panther', 'Vikes', 'Centurions', 'Bengals', 'Pepsi 40024', 'Rainbows', 'Cards', 'Peruvian Ambush', 'Lord of Wiz', 'Rhino Chasers', 'Fearless Trojans', 'Shockers'];
 
 // Calculate positions remaining for each team
 function getTeamPositionCounts() {

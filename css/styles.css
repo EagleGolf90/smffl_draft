@@ -355,6 +355,13 @@ header .draft-input .btn {
     white-space: nowrap;
 }
 
+/* Drafted Options Styling */
+option.drafted {
+    opacity: 0.4;
+    font-style: italic;
+    color: #999;
+}
+
 /* Draft Board */
 .draft-board {
     padding: 10px;
@@ -364,14 +371,15 @@ header .draft-input .btn {
 }
 
 .teams-header {
-    display: grid;
-    grid-template-columns: repeat(10, 1fr);
-    gap: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-.teams-header.teams-12 {
+.team-row {
+    display: grid;
     grid-template-columns: repeat(6, 1fr);
-    grid-template-rows: auto auto;
+    gap: 8px;
 }
 
 .team-column {
