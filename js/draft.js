@@ -132,6 +132,16 @@ function populatePlayerDropdown(selectedPosition = null) {
     });
 }
 
+// Reset both dropdowns back to their blank/default option
+function resetDraftDropdowns() {
+    const positionDropdown = document.getElementById('positionSelect');
+    const playerDropdown = document.getElementById('playerSelect');
+
+    positionDropdown.selectedIndex = 0;
+    playerDropdown.innerHTML = '<option value="">Select a player...</option>';
+    playerDropdown.selectedIndex = 0;
+}
+
 // Load draft state from localStorage
 function loadDraftState() {
     const saved = localStorage.getItem('draftState');
@@ -277,6 +287,11 @@ function addPick() {
     draftState.availablePlayers.splice(playerIndex, 1);
     
     renderPick(pick);
+
+    // Clear selectors immediately after posting the pick card.
+    populatePositionDropdown();
+    resetDraftDropdowns();
+    positionDropdown.focus();
     
     // Move to next pick
     draftState.currentPick++;
@@ -288,13 +303,6 @@ function addPick() {
     updatePositionsTracker();
     saveDraftState();
     resetTimer();
-    
-    // Refresh dropdowns and reset selections
-    populatePositionDropdown();
-    populatePlayerDropdown(); // Reset player dropdown to show only default option
-    positionDropdown.value = ''; // Reset position to "Select a position..."
-    playerDropdown.value = ''; // Reset player to blank
-    positionDropdown.focus();
 }
 
 // Render a single pick
@@ -353,8 +361,7 @@ function undoLastPick() {
     updateDraftInfo();
     updatePositionsTracker();
     populatePositionDropdown();
-    document.getElementById('positionSelect').value = '';
-    populatePlayerDropdown();
+    resetDraftDropdowns();
     saveDraftState();
     resetTimer();
 }
@@ -375,8 +382,7 @@ function resetDraft() {
     updateDraftInfo();
     updatePositionsTracker();
     populatePositionDropdown();
-    document.getElementById('positionSelect').value = '';
-    populatePlayerDropdown();
+    resetDraftDropdowns();
     saveDraftState();
     resetTimer();
 }
@@ -486,8 +492,7 @@ function applySettings() {
     updateDraftInfo();
     updatePositionsTracker();
     populatePositionDropdown();
-    document.getElementById('positionSelect').value = '';
-    populatePlayerDropdown();
+    resetDraftDropdowns();
     saveDraftState();
     resetTimer();
 }
