@@ -73,9 +73,9 @@ function initializeDraft() {
 }
 
 // Populate the position dropdown
-function populatePositionDropdown() {
+function populatePositionDropdown(selectedPosition = '') {
     const dropdown = document.getElementById('positionSelect');
-    dropdown.innerHTML = '<option value="">Select a position...</option>';
+    dropdown.innerHTML = '<option value="">Select a position</option>';
     
     // Get unique positions from ALL players
     const positions = [...new Set(allPlayers.map(p => p.position))].sort();
@@ -96,40 +96,44 @@ function populatePositionDropdown() {
         
         dropdown.appendChild(option);
     });
+
+    dropdown.value = selectedPosition;
+    if (dropdown.value !== selectedPosition) {
+        dropdown.selectedIndex = 0;
+    }
 }
 
 // Populate the player dropdown based on selected position
 function populatePlayerDropdown(selectedPosition = null) {
     const dropdown = document.getElementById('playerSelect');
-    dropdown.innerHTML = '<option value="">Select a player...</option>';
+    dropdown.innerHTML = '<option value="">Select a player</option>';
     
     if (!selectedPosition) {
         return; // Don't populate players until a position is selected
     }
     
-    // Get ALL players for selected position (from master list)
-    const allPositionPlayers = allPlayers.filter(p => p.position === selectedPosition);
+    // Get only AVAILABLE players for selected position
+    const availablePositionPlayers = draftState.availablePlayers.filter(p => p.position === selectedPosition);
     
     // Sort by name
-    const sortedPlayers = [...allPositionPlayers].sort((a, b) => a.name.localeCompare(b.name));
+    const sortedPlayers = [...availablePositionPlayers].sort((a, b) => a.name.localeCompare(b.name));
     
     sortedPlayers.forEach((player, index) => {
         const option = document.createElement('option');
         option.value = player.name;
-        
-        // Check if player is drafted
-        const isDrafted = draftState.draftedPlayers.includes(player.name);
-        
-        if (isDrafted) {
-            option.textContent = `${player.name} (DRAFTED)`;
-            option.classList.add('drafted');
-            option.disabled = true;
-        } else {
-            option.textContent = player.name;
-        }
+        option.textContent = player.name;
         
         dropdown.appendChild(option);
     });
+}
+
+function resetDraftDropdowns() {
+    const playerDropdown = document.getElementById('playerSelect');
+
+    populatePositionDropdown('');
+    populatePlayerDropdown();
+
+    playerDropdown.value = '';
 }
 
 // Load draft state from localStorage
@@ -238,7 +242,6 @@ function updateTeamColumns() {
 
 // Add a pick
 function addPick() {
-    const positionDropdown = document.getElementById('positionSelect');
     const playerDropdown = document.getElementById('playerSelect');
     const selectedPlayerName = playerDropdown.value;
     
@@ -288,13 +291,11 @@ function addPick() {
     updatePositionsTracker();
     saveDraftState();
     resetTimer();
+
+    resetDraftDropdowns();
     
-    // Refresh dropdowns and reset selections
-    populatePositionDropdown();
-    populatePlayerDropdown(); // Reset player dropdown to show only default option
-    positionDropdown.value = ''; // Reset position to "Select a position..."
-    playerDropdown.value = ''; // Reset player to blank
-    positionDropdown.focus();
+    // Set focus back to position dropdown
+    document.getElementById('positionSelect').focus();
 }
 
 // Render a single pick
@@ -352,9 +353,7 @@ function undoLastPick() {
     renderAllPicks();
     updateDraftInfo();
     updatePositionsTracker();
-    populatePositionDropdown();
-    document.getElementById('positionSelect').value = '';
-    populatePlayerDropdown();
+    resetDraftDropdowns();
     saveDraftState();
     resetTimer();
 }
@@ -374,9 +373,7 @@ function resetDraft() {
     renderAllPicks();
     updateDraftInfo();
     updatePositionsTracker();
-    populatePositionDropdown();
-    document.getElementById('positionSelect').value = '';
-    populatePlayerDropdown();
+    resetDraftDropdowns();
     saveDraftState();
     resetTimer();
 }
@@ -485,9 +482,7 @@ function applySettings() {
     renderAllPicks();
     updateDraftInfo();
     updatePositionsTracker();
-    populatePositionDropdown();
-    document.getElementById('positionSelect').value = '';
-    populatePlayerDropdown();
+    resetDraftDropdowns();
     saveDraftState();
     resetTimer();
 }
@@ -538,8 +533,10 @@ document.getElementById('numTeams').value = draftState.numTeams;
 document.getElementById('timeLimit').value = draftState.timeLimit;
 document.getElementById('snakeOrder').checked = draftState.snakeOrder;
 
-// Initialize the draft on page load
-initializeDraft();
+// Wait for team names to be loaded before initializing the draft
+window.addEventListener('teamNamesLoaded', () => {
+    initializeDraft();
+});
 
 // Listen for timer commands from the timer window
 window.addEventListener('storage', (e) => {
