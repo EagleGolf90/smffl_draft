@@ -127,6 +127,7 @@ function populatePlayerDropdown(selectedPosition = null) {
     });
 }
 
+<<<<<<< HEAD
 function resetDraftDropdowns() {
     const playerDropdown = document.getElementById('playerSelect');
 
@@ -134,6 +135,16 @@ function resetDraftDropdowns() {
     populatePlayerDropdown();
 
     playerDropdown.value = '';
+=======
+// Reset both dropdowns back to their blank/default option
+function resetDraftDropdowns() {
+    const positionDropdown = document.getElementById('positionSelect');
+    const playerDropdown = document.getElementById('playerSelect');
+
+    positionDropdown.selectedIndex = 0;
+    playerDropdown.innerHTML = '<option value="">Select a player...</option>';
+    playerDropdown.selectedIndex = 0;
+>>>>>>> ee89ed9e2957d307c7b7796192ba72fb894e352f
 }
 
 // Load draft state from localStorage
@@ -280,6 +291,11 @@ function addPick() {
     draftState.availablePlayers.splice(playerIndex, 1);
     
     renderPick(pick);
+
+    // Clear selectors immediately after posting the pick card.
+    populatePositionDropdown();
+    resetDraftDropdowns();
+    positionDropdown.focus();
     
     // Move to next pick
     draftState.currentPick++;
@@ -291,11 +307,14 @@ function addPick() {
     updatePositionsTracker();
     saveDraftState();
     resetTimer();
+<<<<<<< HEAD
 
     resetDraftDropdowns();
     
     // Set focus back to position dropdown
     document.getElementById('positionSelect').focus();
+=======
+>>>>>>> ee89ed9e2957d307c7b7796192ba72fb894e352f
 }
 
 // Render a single pick
@@ -353,6 +372,10 @@ function undoLastPick() {
     renderAllPicks();
     updateDraftInfo();
     updatePositionsTracker();
+<<<<<<< HEAD
+=======
+    populatePositionDropdown();
+>>>>>>> ee89ed9e2957d307c7b7796192ba72fb894e352f
     resetDraftDropdowns();
     saveDraftState();
     resetTimer();
@@ -373,6 +396,10 @@ function resetDraft() {
     renderAllPicks();
     updateDraftInfo();
     updatePositionsTracker();
+<<<<<<< HEAD
+=======
+    populatePositionDropdown();
+>>>>>>> ee89ed9e2957d307c7b7796192ba72fb894e352f
     resetDraftDropdowns();
     saveDraftState();
     resetTimer();
@@ -482,6 +509,10 @@ function applySettings() {
     renderAllPicks();
     updateDraftInfo();
     updatePositionsTracker();
+<<<<<<< HEAD
+=======
+    populatePositionDropdown();
+>>>>>>> ee89ed9e2957d307c7b7796192ba72fb894e352f
     resetDraftDropdowns();
     saveDraftState();
     resetTimer();
