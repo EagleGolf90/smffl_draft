@@ -1,4 +1,5 @@
 // Available Players List
+console.log('availablePlayers.js is loading...');
 const availablePlayers = [
     { name: "Christian McCaffrey", position: "RB" },
     { name: "Tyreek Hill", position: "WR" },
@@ -118,3 +119,6 @@ const availablePlayers = [
     { name: "Cameron Dicker", position: "K" },
     { name: "Jake Elliott", position: "K" }
 ];
+
+console.log('availablePlayers.js loaded successfully!');
+console.log('Total players:', availablePlayers.length);

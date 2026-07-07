@@ -1,4 +1,5 @@
 // Keep a master list of all players (never modified)
+console.log('draft.js starting...', typeof availablePlayers);
 const allPlayers = [...availablePlayers];
 
 // Roster requirements
@@ -127,24 +128,14 @@ function populatePlayerDropdown(selectedPosition = null) {
     });
 }
 
-<<<<<<< HEAD
-function resetDraftDropdowns() {
-    const playerDropdown = document.getElementById('playerSelect');
-
-    populatePositionDropdown('');
-    populatePlayerDropdown();
-
-    playerDropdown.value = '';
-=======
 // Reset both dropdowns back to their blank/default option
 function resetDraftDropdowns() {
     const positionDropdown = document.getElementById('positionSelect');
     const playerDropdown = document.getElementById('playerSelect');
 
     positionDropdown.selectedIndex = 0;
-    playerDropdown.innerHTML = '<option value="">Select a player...</option>';
+    playerDropdown.innerHTML = '<option value="">Select a player</option>';
     playerDropdown.selectedIndex = 0;
->>>>>>> ee89ed9e2957d307c7b7796192ba72fb894e352f
 }
 
 // Load draft state from localStorage
@@ -214,12 +205,25 @@ function updateDraftInfo() {
     
     // Highlight active team
     document.querySelectorAll('.team-column').forEach(col => {
-        col.classList.remove('active');
+        col.classList.remove('active', 'pulse');
     });
     const activeTeam = getCurrentTeam();
     const activeColumn = document.querySelector(`.team-column[data-team="${activeTeam}"]`);
     if (activeColumn) {
         activeColumn.classList.add('active');
+        
+        // Add pulse animation
+        activeColumn.classList.add('pulse');
+        setTimeout(() => {
+            activeColumn.classList.remove('pulse');
+        }, 1000);
+        
+        // Scroll the active team into view
+        activeColumn.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'nearest',
+            inline: 'center'
+        });
     }
 }
 
@@ -228,24 +232,57 @@ function updateTeamColumns() {
     const teamsContainer = document.querySelector('.teams-header');
     teamsContainer.innerHTML = '';
     
-    // Apply special layout for 12 teams
+    // For 12 teams, create two rows of 6 teams each
     if (draftState.numTeams === 12) {
-        teamsContainer.classList.add('teams-12');
+        // First row - Teams 1-6
+        const firstRow = document.createElement('div');
+        firstRow.className = 'team-row';
+        for (let i = 1; i <= 6; i++) {
+            const teamCol = document.createElement('div');
+            teamCol.className = 'team-column';
+            teamCol.setAttribute('data-team', i);
+            const teamName = teamNames[i - 1] || `Team ${i}`;
+            teamCol.innerHTML = `
+                <h3>${teamName}</h3>
+                <div class="team-picks" id="team${i}Picks"></div>
+            `;
+            firstRow.appendChild(teamCol);
+        }
+        teamsContainer.appendChild(firstRow);
+        
+        // Second row - Teams 7-12
+        const secondRow = document.createElement('div');
+        secondRow.className = 'team-row';
+        for (let i = 7; i <= 12; i++) {
+            const teamCol = document.createElement('div');
+            teamCol.className = 'team-column';
+            teamCol.setAttribute('data-team', i);
+            const teamName = teamNames[i - 1] || `Team ${i}`;
+            teamCol.innerHTML = `
+                <h3>${teamName}</h3>
+                <div class="team-picks" id="team${i}Picks"></div>
+            `;
+            secondRow.appendChild(teamCol);
+        }
+        teamsContainer.appendChild(secondRow);
     } else {
-        teamsContainer.classList.remove('teams-12');
-        teamsContainer.style.gridTemplateColumns = `repeat(${draftState.numTeams}, 1fr)`;
-    }
-    
-    for (let i = 1; i <= draftState.numTeams; i++) {
-        const teamCol = document.createElement('div');
-        teamCol.className = 'team-column';
-        teamCol.setAttribute('data-team', i);
-        const teamName = teamNames[i - 1] || `Team ${i}`;
-        teamCol.innerHTML = `
-            <h3>${teamName}</h3>
-            <div class="team-picks" id="team${i}Picks"></div>
-        `;
-        teamsContainer.appendChild(teamCol);
+        // For other team counts, use single row
+        const singleRow = document.createElement('div');
+        singleRow.className = 'team-row';
+        singleRow.style.gridTemplateColumns = `repeat(${draftState.numTeams}, 1fr)`;
+        
+        for (let i = 1; i <= draftState.numTeams; i++) {
+            const teamCol = document.createElement('div');
+            teamCol.className = 'team-column';
+            teamCol.setAttribute('data-team', i);
+            const teamName = teamNames[i - 1] || `Team ${i}`;
+            teamCol.innerHTML = `
+                <h3>${teamName}</h3>
+                <div class="team-picks" id="team${i}Picks"></div>
+            `;
+            singleRow.appendChild(teamCol);
+        }
+        teamsContainer.appendChild(singleRow);
     }
     
     updateDraftInfo();
@@ -291,11 +328,6 @@ function addPick() {
     draftState.availablePlayers.splice(playerIndex, 1);
     
     renderPick(pick);
-
-    // Clear selectors immediately after posting the pick card.
-    populatePositionDropdown();
-    resetDraftDropdowns();
-    positionDropdown.focus();
     
     // Move to next pick
     draftState.currentPick++;
@@ -303,18 +335,18 @@ function addPick() {
         draftState.currentRound++;
     }
     
+    // Update the display to show the next team on the clock
     updateDraftInfo();
     updatePositionsTracker();
     saveDraftState();
     resetTimer();
-<<<<<<< HEAD
-
+    
+    // Repopulate and reset dropdowns for the next team
+    populatePositionDropdown();
     resetDraftDropdowns();
     
-    // Set focus back to position dropdown
+    // Set focus back to position dropdown for next selection
     document.getElementById('positionSelect').focus();
-=======
->>>>>>> ee89ed9e2957d307c7b7796192ba72fb894e352f
 }
 
 // Render a single pick
@@ -372,10 +404,7 @@ function undoLastPick() {
     renderAllPicks();
     updateDraftInfo();
     updatePositionsTracker();
-<<<<<<< HEAD
-=======
     populatePositionDropdown();
->>>>>>> ee89ed9e2957d307c7b7796192ba72fb894e352f
     resetDraftDropdowns();
     saveDraftState();
     resetTimer();
@@ -396,10 +425,7 @@ function resetDraft() {
     renderAllPicks();
     updateDraftInfo();
     updatePositionsTracker();
-<<<<<<< HEAD
-=======
     populatePositionDropdown();
->>>>>>> ee89ed9e2957d307c7b7796192ba72fb894e352f
     resetDraftDropdowns();
     saveDraftState();
     resetTimer();
@@ -509,10 +535,7 @@ function applySettings() {
     renderAllPicks();
     updateDraftInfo();
     updatePositionsTracker();
-<<<<<<< HEAD
-=======
     populatePositionDropdown();
->>>>>>> ee89ed9e2957d307c7b7796192ba72fb894e352f
     resetDraftDropdowns();
     saveDraftState();
     resetTimer();
@@ -582,8 +605,6 @@ window.addEventListener('storage', (e) => {
     }
 });
 
-const teamNames = ['White Panther', 'Vikes', 'Centurions', 'Bengals', 'Pepsi 40024', 'Rainbows', 'Cards', 'Peruvian Ambush', 'Lord of Wiz', 'Rhino Chasers', 'Fearless Trojans', 'Shockers'];
-
 // Calculate positions remaining for each team
 function getTeamPositionCounts() {
     const counts = {};
@@ -643,7 +664,8 @@ function updatePositionsTracker() {
         
         const teamCell = document.createElement('div');
         teamCell.className = 'positions-cell team-cell';
-        teamCell.textContent = `Team ${i}`;
+        const teamName = teamNames[i - 1] || `Team ${i}`;
+        teamCell.textContent = teamName;
         teamRow.appendChild(teamCell);
         
         positions.forEach(pos => {
@@ -666,5 +688,15 @@ function updatePositionsTracker() {
         });
         
         grid.appendChild(teamRow);
+        
+        // Scroll active team into view in positions tracker
+        if (i === getCurrentTeam()) {
+            setTimeout(() => {
+                teamRow.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'nearest'
+                });
+            }, 100);
+        }
     }
 }
