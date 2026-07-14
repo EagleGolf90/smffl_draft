@@ -1,16 +1,52 @@
 {
   "teams": [
-    "White Panther",
-    "Vikes",
-    "Centurions",
-    "Bengals",
-    "Pepsi 40024",
-    "Rainbows",
-    "Cards",
-    "Peruvian Ambush",
-    "Lord of Wiz",
-    "Rhino Chasers",
-    "Fearless Trojans",
-    "Shockers"
+    {
+      "name": "White Panther",
+      "owner": "Dean VonAllmen"
+    },
+    {
+      "name": "Vikes",
+      "owner": "Jeff Cecil"
+    },
+    {
+      "name": "Centurions",
+      "owner": "Ben Rogers"
+    },
+    {
+      "name": "Bengals",
+      "owner": "Darin Souder"
+    },
+    {
+      "name": "Pepsi 40024",
+      "owner": "Joshua Rogers"
+    },
+    {
+      "name": "Rainbows",
+      "owner": "Rick Green"
+    },
+    {
+      "name": "Cards",
+      "owner": "Derrick Milby"
+    },
+    {
+      "name": "Peruvian Ambush",
+      "owner": "John Doe"
+    },
+    {
+      "name": "Lord of Wiz",
+      "owner": "Jane Doe"
+    },
+    {
+      "name": "Rhino Chasers",
+      "owner": "Eric C"
+    },
+    {
+      "name": "Fearless Trojans",
+      "owner": "Bernie Rogers"
+    },
+    {
+      "name": "Shockers",
+      "owner": "John Doe II"
+    }
   ]
 }

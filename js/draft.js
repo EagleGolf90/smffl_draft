@@ -238,6 +238,21 @@ function updateTeamColumns() {
     const teamsContainer = document.querySelector('.teams-header');
     teamsContainer.innerHTML = '';
     
+    // Helper function to create team header HTML
+    function createTeamHeader(teamIndex) {
+        const teamName = teamNames[teamIndex - 1] || `Team ${teamIndex}`;
+        const teamOwner = teamOwners && teamOwners[teamIndex - 1] ? teamOwners[teamIndex - 1] : '';
+        
+        if (teamOwner) {
+            return `<h3>
+                <div class="team-name">${teamName}</div>
+                <div class="team-owner">${teamOwner}</div>
+            </h3>`;
+        } else {
+            return `<h3>${teamName}</h3>`;
+        }
+    }
+    
     // For 12 teams, create two rows of 6 teams each
     if (draftState.numTeams === 12) {
         // First row - Teams 1-6
@@ -247,9 +262,8 @@ function updateTeamColumns() {
             const teamCol = document.createElement('div');
             teamCol.className = 'team-column';
             teamCol.setAttribute('data-team', i);
-            const teamName = teamNames[i - 1] || `Team ${i}`;
             teamCol.innerHTML = `
-                <h3>${teamName}</h3>
+                ${createTeamHeader(i)}
                 <div class="team-picks" id="team${i}Picks"></div>
             `;
             firstRow.appendChild(teamCol);
@@ -263,9 +277,8 @@ function updateTeamColumns() {
             const teamCol = document.createElement('div');
             teamCol.className = 'team-column';
             teamCol.setAttribute('data-team', i);
-            const teamName = teamNames[i - 1] || `Team ${i}`;
             teamCol.innerHTML = `
-                <h3>${teamName}</h3>
+                ${createTeamHeader(i)}
                 <div class="team-picks" id="team${i}Picks"></div>
             `;
             secondRow.appendChild(teamCol);
@@ -281,9 +294,8 @@ function updateTeamColumns() {
             const teamCol = document.createElement('div');
             teamCol.className = 'team-column';
             teamCol.setAttribute('data-team', i);
-            const teamName = teamNames[i - 1] || `Team ${i}`;
             teamCol.innerHTML = `
-                <h3>${teamName}</h3>
+                ${createTeamHeader(i)}
                 <div class="team-picks" id="team${i}Picks"></div>
             `;
             singleRow.appendChild(teamCol);
