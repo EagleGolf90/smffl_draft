@@ -22,5 +22,5 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
           port: 21
-          local-dir: ./        # or ./ if deploying root
-          server-dir: kdga/smffl/draft/  # WHH default
+          local-dir: ./
+          server-dir: kdga/smffl/draft/
