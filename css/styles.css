@@ -126,7 +126,7 @@ header h1 {
 
 .positions-row {
     display: grid;
-    grid-template-columns: 120px repeat(6, 1fr);
+    grid-template-columns: 120px repeat(7, 1fr);
     gap: 4px;
     align-items: center;
 }
@@ -183,6 +183,10 @@ header h1 {
 
 .position-header[data-position="DEF"] {
     background: #34495e;
+}
+
+.position-header[data-position="DP"] {
+    background: #e67e22;
 }
 
 .positions-cell.complete {

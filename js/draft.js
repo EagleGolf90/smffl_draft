@@ -6,9 +6,11 @@ const allPlayers = [...availablePlayers];
 const rosterRequirements = {
     QB: 2,
     RB: 4,
-    WRTE: 4,
+    WR: 2,
+    TE: 2,
     K: 2,
-    DEF: 2
+    DEF: 2,
+    DP: 2
 };
 
 // Draft State

@@ -117,7 +117,27 @@ const availablePlayers = [
     { name: "Evan McPherson", position: "K" },
     { name: "Younghoe Koo", position: "K" },
     { name: "Cameron Dicker", position: "K" },
-    { name: "Jake Elliott", position: "K" }
+    { name: "Jake Elliott", position: "K" },
+    { name: "T.J. Watt", position: "DP" },
+    { name: "Micah Parsons", position: "DP" },
+    { name: "Myles Garrett", position: "DP" },
+    { name: "Fred Warner", position: "DP" },
+    { name: "Roquan Smith", position: "DP" },
+    { name: "Patrick Surtain II", position: "DP" },
+    { name: "Sauce Gardner", position: "DP" },
+    { name: "DaRon Bland", position: "DP" },
+    { name: "Jalen Ramsey", position: "DP" },
+    { name: "Nick Bosa", position: "DP" },
+    { name: "Maxx Crosby", position: "DP" },
+    { name: "Derwin James", position: "DP" },
+    { name: "Bobby Okereke", position: "DP" },
+    { name: "Dexter Lawrence", position: "DP" },
+    { name: "Jaire Alexander", position: "DP" },
+    { name: "Zaire Franklin", position: "DP" },
+    { name: "Danielle Hunter", position: "DP" },
+    { name: "Christian Wilkins", position: "DP" },
+    { name: "Kyle Hamilton", position: "DP" },
+    { name: "Demario Davis", position: "DP" }
 ];
 
 console.log('availablePlayers.js loaded successfully!');

@@ -344,7 +344,8 @@ const availablePlayers = [
 {
     QB: 2,      // 2 Quarterbacks
     RB: 4,      // 4 Running Backs
-    WRTE: 4,    // 4 WR/TE combined
+    WR: 2,      // 2 Wide Receivers
+    TE: 2,      // 2 Tight Ends
     K: 2,       // 2 Kickers
     DEF: 2      // 2 Defenses
 }
