@@ -9,6 +9,8 @@ async function loadTeamNames() {
         const response = await fetch('./data/teamNames.json');
         const data = await response.json();
         
+        console.log('Loaded team data:', data); // Debug log
+        
         // Support both old format (array of strings) and new format (array of objects)
         if (Array.isArray(data.teams) && data.teams.length > 0) {
             if (typeof data.teams[0] === 'string') {
@@ -21,40 +23,16 @@ async function loadTeamNames() {
                 window.teamOwners = data.teams.map(team => team.owner || '');
             }
         }
-        populateTeamNames();
+        
+        console.log('Team names:', window.teamNames); // Debug log
+        console.log('Team owners:', window.teamOwners); // Debug log
+        
     } catch (error) {
         console.error('Error loading team names:', error);
         // Fallback to default team names if JSON fails to load
         window.teamNames = Array.from({ length: 12 }, (_, i) => `Team ${i + 1}`);
         window.teamOwners = Array.from({ length: 12 }, () => '');
-        populateTeamNames();
     }
-}
-
-// Populate team names in the HTML
-function populateTeamNames() {
-    const teamColumns = document.querySelectorAll('.team-column');
-    teamColumns.forEach((column, index) => {
-        const h3 = column.querySelector('h3');
-        if (h3 && window.teamNames[index]) {
-            // Clear existing content
-            h3.innerHTML = '';
-            
-            // Create team name element
-            const teamNameSpan = document.createElement('div');
-            teamNameSpan.className = 'team-name';
-            teamNameSpan.textContent = window.teamNames[index];
-            h3.appendChild(teamNameSpan);
-            
-            // Create owner element if owner exists
-            if (window.teamOwners[index]) {
-                const ownerSpan = document.createElement('div');
-                ownerSpan.className = 'team-owner';
-                ownerSpan.textContent = window.teamOwners[index];
-                h3.appendChild(ownerSpan);
-            }
-        }
-    });
 }
 
 // Load team names when the page loads
@@ -62,4 +40,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadTeamNames();
     // Dispatch event to notify other scripts that team names are ready
     window.dispatchEvent(new CustomEvent('teamNamesLoaded'));
+    console.log('teamNamesLoaded event dispatched'); // Debug log
 });

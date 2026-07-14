@@ -63,11 +63,12 @@ try {
 
 // Initialize the draft board
 function initializeDraft() {
+    console.log('initializeDraft called'); // Debug log
     loadDraftState();
+    updateTeamColumns();  // Create team columns first with proper names
     populatePositionDropdown();
     populatePlayerDropdown();
-    updateDraftInfo();
-    updateTeamColumns();
+    updateDraftInfo();  // Then update the draft info which references the columns
     renderAllPicks();
     updatePositionsTracker();
     syncToLocalStorage();
@@ -169,7 +170,7 @@ function saveDraftState() {
 // Sync specific values to localStorage for timer window
 function syncToLocalStorage() {
     const currentTeam = getCurrentTeam();
-    const teamName = teamNames[currentTeam - 1] || `Team ${currentTeam}`;
+    const teamName = (window.teamNames && window.teamNames[currentTeam - 1]) || `Team ${currentTeam}`;
     localStorage.setItem('draftCurrentTeam', teamName);
     localStorage.setItem('draftCurrentPick', draftState.currentPick.toString());
     localStorage.setItem('draftCurrentRound', draftState.currentRound.toString());
@@ -196,7 +197,7 @@ function updateDraftInfo() {
     document.getElementById('currentPick').textContent = draftState.currentPick;
     document.getElementById('currentRound').textContent = draftState.currentRound;
     const currentTeam = getCurrentTeam();
-    const teamName = teamNames[currentTeam - 1] || `Team ${currentTeam}`;
+    const teamName = (window.teamNames && window.teamNames[currentTeam - 1]) || `Team ${currentTeam}`;
     document.getElementById('onTheClock').textContent = teamName;
     
     // Broadcast team change to other windows
@@ -235,13 +236,19 @@ function updateDraftInfo() {
 
 // Update team columns based on number of teams
 function updateTeamColumns() {
+    console.log('updateTeamColumns called'); // Debug log
+    console.log('window.teamNames:', window.teamNames); // Debug log
+    console.log('window.teamOwners:', window.teamOwners); // Debug log
+    
     const teamsContainer = document.querySelector('.teams-header');
     teamsContainer.innerHTML = '';
     
     // Helper function to create team header HTML
     function createTeamHeader(teamIndex) {
-        const teamName = teamNames[teamIndex - 1] || `Team ${teamIndex}`;
-        const teamOwner = teamOwners && teamOwners[teamIndex - 1] ? teamOwners[teamIndex - 1] : '';
+        const teamName = (window.teamNames && window.teamNames[teamIndex - 1]) || `Team ${teamIndex}`;
+        const teamOwner = (window.teamOwners && window.teamOwners[teamIndex - 1]) || '';
+        
+        console.log(`Team ${teamIndex}: ${teamName}, Owner: ${teamOwner}`); // Debug log
         
         if (teamOwner) {
             return `<h3>
@@ -249,7 +256,9 @@ function updateTeamColumns() {
                 <div class="team-owner">${teamOwner}</div>
             </h3>`;
         } else {
-            return `<h3>${teamName}</h3>`;
+            return `<h3>
+                <div class="team-name">${teamName}</div>
+            </h3>`;
         }
     }
     
@@ -329,7 +338,7 @@ function addPick() {
     const player = draftState.availablePlayers[playerIndex];
     
     const currentTeam = getCurrentTeam();
-    const teamName = teamNames[currentTeam - 1] || `Team ${currentTeam}`;
+    const teamName = (window.teamNames && window.teamNames[currentTeam - 1]) || `Team ${currentTeam}`;
     const pick = {
         pickNumber: draftState.currentPick,
         round: draftState.currentRound,
@@ -798,7 +807,7 @@ function updatePositionsTracker() {
         
         const teamCell = document.createElement('div');
         teamCell.className = 'positions-cell team-cell';
-        const teamName = teamNames[i - 1] || `Team ${i}`;
+        const teamName = (window.teamNames && window.teamNames[i - 1]) || `Team ${i}`;
         teamCell.textContent = teamName;
         teamRow.appendChild(teamCell);
         
