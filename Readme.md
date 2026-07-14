@@ -9,6 +9,7 @@ A Fantasy Football draft board application with an integrated timer for managing
 - **Draft Timer**: Separate timer window with countdown clock
 - **Pick Management**: Add picks with player names and positions
 - **Undo Functionality**: Undo the last pick if needed
+- **Save/Load Draft**: Export draft to JSON file and import saved drafts
 - **Customizable Settings**: Configure number of teams, time limits, and draft order
 - **Persistent Storage**: Draft state saved automatically using localStorage
 - **Visual Indicators**: Color-coded positions and active team highlighting
@@ -23,6 +24,8 @@ A Fantasy Football draft board application with an integrated timer for managing
 5. Click "Add Pick" or press Enter to record each selection
 6. Use "Start Timer" to begin the countdown for each pick
 7. The draft board automatically tracks rounds and turn order
+8. Click "💾 Save Draft" to export your draft to a JSON file
+9. Click "📂 Load Draft" to import a previously saved draft
 
 ## Files
 

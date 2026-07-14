@@ -1,17 +1,18 @@
 // Load team names from JSON and populate the draft board
-let teamNames = [];
+// Declare as global variable so draft.js can access it
+window.teamNames = [];
 
 // Fetch team names from JSON file
 async function loadTeamNames() {
     try {
         const response = await fetch('./data/teamNames.json');
         const data = await response.json();
-        teamNames = data.teams;
+        window.teamNames = data.teams;
         populateTeamNames();
     } catch (error) {
         console.error('Error loading team names:', error);
         // Fallback to default team names if JSON fails to load
-        teamNames = Array.from({ length: 12 }, (_, i) => `Team ${i + 1}`);
+        window.teamNames = Array.from({ length: 12 }, (_, i) => `Team ${i + 1}`);
         populateTeamNames();
     }
 }
@@ -21,8 +22,8 @@ function populateTeamNames() {
     const teamColumns = document.querySelectorAll('.team-column');
     teamColumns.forEach((column, index) => {
         const h3 = column.querySelector('h3');
-        if (h3 && teamNames[index]) {
-            h3.textContent = teamNames[index];
+        if (h3 && window.teamNames[index]) {
+            h3.textContent = window.teamNames[index];
         }
     });
 }

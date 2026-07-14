@@ -145,12 +145,18 @@ function loadDraftState() {
         const parsed = JSON.parse(saved);
         draftState = { ...draftState, ...parsed };
         
-        // Ensure currentPick is at least 1
-        draftState.currentPick = 1;
+        // Ensure currentPick is at least 1 (only fix invalid states)
+        if (draftState.currentPick < 1) {
+            draftState.currentPick = 1;
+        }
         
-        // Always ensure timer is set to 120 seconds (2 minutes)
+        // Ensure timer limit is set to 120 seconds (2 minutes) but keep current timeRemaining
         draftState.timeLimit = 120;
-        draftState.timeRemaining = 120;
+        
+        // If timeRemaining wasn't saved or is invalid, reset it to time limit
+        if (draftState.timeRemaining === undefined || draftState.timeRemaining < 0) {
+            draftState.timeRemaining = draftState.timeLimit;
+        }
     }
 }
 
@@ -311,10 +317,12 @@ function addPick() {
     const player = draftState.availablePlayers[playerIndex];
     
     const currentTeam = getCurrentTeam();
+    const teamName = teamNames[currentTeam - 1] || `Team ${currentTeam}`;
     const pick = {
         pickNumber: draftState.currentPick,
         round: draftState.currentRound,
         team: currentTeam,
+        teamName: teamName,
         player: player.name,
         position: player.position
     };
@@ -340,6 +348,9 @@ function addPick() {
     updatePositionsTracker();
     saveDraftState();
     resetTimer();
+    
+    // Auto-start timer for next team on the clock
+    startTimer();
     
     // Repopulate and reset dropdowns for the next team
     populatePositionDropdown();
@@ -408,6 +419,9 @@ function undoLastPick() {
     resetDraftDropdowns();
     saveDraftState();
     resetTimer();
+    
+    // Auto-start timer for the team back on the clock
+    startTimer();
 }
 
 // Reset the entire draft
@@ -429,6 +443,110 @@ function resetDraft() {
     resetDraftDropdowns();
     saveDraftState();
     resetTimer();
+}
+
+// Export draft to JSON file
+function exportDraftToJSON() {
+    // Exclude availablePlayers from export to reduce file size
+    const { availablePlayers, ...draftStateWithoutPlayers } = draftState;
+    
+    const draftData = {
+        version: '1.0',
+        timestamp: new Date().toISOString(),
+        draftState: draftStateWithoutPlayers,
+        teamNames: teamNames,
+        exportDate: new Date().toLocaleString()
+    };
+    
+    const dataStr = JSON.stringify(draftData, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    
+    // Create filename with timestamp
+    const dateStr = new Date().toISOString().split('T')[0];
+    const timeStr = new Date().toTimeString().split(' ')[0].replace(/:/g, '-');
+    link.download = `smffl-draft-${dateStr}-${timeStr}.json`;
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    alert('Draft saved successfully!');
+}
+
+// Import draft from JSON file
+function importDraftFromJSON() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    
+    input.onchange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            try {
+                const importedData = JSON.parse(event.target.result);
+                
+                // Validate the imported data
+                if (!importedData.draftState || !importedData.version) {
+                    alert('Invalid draft file format. Please select a valid SMFFL draft file.');
+                    return;
+                }
+                
+                // Confirm import
+                const confirmImport = confirm(
+                    `Import draft from ${importedData.exportDate || 'unknown date'}?\n\n` +
+                    `This will replace your current draft with:\n` +
+                    `- Pick: ${importedData.draftState.currentPick}\n` +
+                    `- Round: ${importedData.draftState.currentRound}\n` +
+                    `- Total Picks: ${importedData.draftState.picks.length}\n\n` +
+                    `Your current draft will be overwritten.`
+                );
+                
+                if (!confirmImport) return;
+                
+                // Restore the draft state
+                draftState = { ...draftState, ...importedData.draftState };
+                
+                // Reconstruct availablePlayers by filtering out drafted players
+                const draftedPlayerNames = new Set(draftState.draftedPlayers || []);
+                draftState.availablePlayers = allPlayers.filter(
+                    player => !draftedPlayerNames.has(player.name)
+                );
+                
+                // Restore team names if available
+                if (importedData.teamNames && importedData.teamNames.length > 0) {
+                    teamNames = importedData.teamNames;
+                    populateTeamNames();
+                }
+                
+                // Save to localStorage and refresh UI
+                saveDraftState();
+                updateTeamColumns();
+                renderAllPicks();
+                updateDraftInfo();
+                updatePositionsTracker();
+                populatePositionDropdown();
+                resetDraftDropdowns();
+                resetTimer();
+                
+                alert('Draft imported successfully!');
+            } catch (error) {
+                console.error('Error importing draft:', error);
+                alert('Error importing draft file. Please make sure the file is valid JSON.');
+            }
+        };
+        
+        reader.readAsText(file);
+    };
+    
+    input.click();
 }
 
 // Timer functions
@@ -574,6 +692,10 @@ document.getElementById('playerSelect').addEventListener('keypress', (e) => {
 document.getElementById('undoPick').addEventListener('click', undoLastPick);
 
 document.getElementById('resetDraft').addEventListener('click', resetDraft);
+
+document.getElementById('exportDraft').addEventListener('click', exportDraftToJSON);
+
+document.getElementById('importDraft').addEventListener('click', importDraftFromJSON);
 
 document.getElementById('startTimer').addEventListener('click', startTimer);
 document.getElementById('pauseTimer').addEventListener('click', pauseTimer);
