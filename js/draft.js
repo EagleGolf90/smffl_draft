@@ -2,15 +2,35 @@
 console.log('draft.js starting...', typeof availablePlayers);
 const allPlayers = [...availablePlayers];
 
+// Password protection
+const ADMIN_PASSWORD = 'admin'; // Change this to your desired password
+
+function checkPassword(action = 'perform this action') {
+    const password = prompt(`Enter password to ${action}:`);
+    if (password === null) {
+        return false; // User cancelled
+    }
+    if (password !== ADMIN_PASSWORD) {
+        alert('Incorrect password!');
+        return false;
+    }
+    return true;
+}
+
 // Roster requirements
+// Note: WR and TE are flexible - owner needs 4 total from these positions (any combination)
 const rosterRequirements = {
     QB: 2,
     RB: 4,
-    WR: 2,
-    TE: 2,
+    'WR/TE': 4,  // Flexible: can be 4 WR, 3 WR + 1 TE, 2 WR + 2 TE, etc.
     K: 2,
     DEF: 2,
     DP: 2
+};
+
+// Track which positions are part of flexible groups
+const flexibleGroups = {
+    'WR/TE': ['WR', 'TE']
 };
 
 // Draft State
@@ -347,7 +367,8 @@ function addPick() {
         team: currentTeam,
         teamName: teamName,
         player: player.name,
-        position: player.position
+        position: player.position,
+        isSkipped: false
     };
     
     draftState.picks.push(pick);
@@ -383,18 +404,70 @@ function addPick() {
     document.getElementById('positionSelect').focus();
 }
 
+// Skip the current pick
+function skipPick() {
+    const confirmSkip = confirm('Skip the current pick? This will record a skipped pick for the team on the clock.');
+    if (!confirmSkip) return;
+    
+    const currentTeam = getCurrentTeam();
+    const teamName = (window.teamNames && window.teamNames[currentTeam - 1]) || `Team ${currentTeam}`;
+    const pick = {
+        pickNumber: draftState.currentPick,
+        round: draftState.currentRound,
+        team: currentTeam,
+        teamName: teamName,
+        player: 'SKIPPED',
+        position: 'N/A',
+        isSkipped: true
+    };
+    
+    draftState.picks.push(pick);
+    
+    renderPick(pick);
+    
+    // Move to next pick
+    draftState.currentPick++;
+    if (draftState.currentPick > draftState.numTeams * draftState.currentRound) {
+        draftState.currentRound++;
+    }
+    
+    // Update the display to show the next team on the clock
+    updateDraftInfo();
+    updatePositionsTracker();
+    saveDraftState();
+    resetTimer();
+    
+    // Auto-start timer for next team on the clock
+    startTimer();
+    
+    // Reset dropdowns for the next team
+    populatePositionDropdown();
+    resetDraftDropdowns();
+    
+    // Set focus back to position dropdown for next selection
+    document.getElementById('positionSelect').focus();
+}
+
 // Render a single pick
 function renderPick(pick) {
     const teamPicks = document.getElementById(`team${pick.team}Picks`);
     if (!teamPicks) return;
     
     const pickCard = document.createElement('div');
-    pickCard.className = 'pick-card';
+    pickCard.className = pick.isSkipped ? 'pick-card skipped-pick' : 'pick-card';
     pickCard.setAttribute('data-position', pick.position);
-    pickCard.innerHTML = `
-        <div class="pick-number">Pick ${pick.pickNumber} (Rd ${pick.round})</div>
-        <div class="pick-player">${pick.player} - ${pick.position}</div>
-    `;
+    
+    if (pick.isSkipped) {
+        pickCard.innerHTML = `
+            <div class="pick-number">Pick ${pick.pickNumber} (Rd ${pick.round})</div>
+            <div class="pick-player">⏭️ SKIPPED</div>
+        `;
+    } else {
+        pickCard.innerHTML = `
+            <div class="pick-number">Pick ${pick.pickNumber} (Rd ${pick.round})</div>
+            <div class="pick-player">${pick.player} - ${pick.position}</div>
+        `;
+    }
     
     teamPicks.appendChild(pickCard);
 }
@@ -419,17 +492,20 @@ function undoLastPick() {
     
     const lastPick = draftState.picks.pop();
     
-    // Remove from drafted players list
-    const draftedIndex = draftState.draftedPlayers.indexOf(lastPick.player);
-    if (draftedIndex > -1) {
-        draftState.draftedPlayers.splice(draftedIndex, 1);
+    // Only restore player to available list if it wasn't a skipped pick
+    if (!lastPick.isSkipped) {
+        // Remove from drafted players list
+        const draftedIndex = draftState.draftedPlayers.indexOf(lastPick.player);
+        if (draftedIndex > -1) {
+            draftState.draftedPlayers.splice(draftedIndex, 1);
+        }
+        
+        // Add player back to available players
+        draftState.availablePlayers.push({
+            name: lastPick.player,
+            position: lastPick.position
+        });
     }
-    
-    // Add player back to available players
-    draftState.availablePlayers.push({
-        name: lastPick.player,
-        position: lastPick.position
-    });
     
     // Update current pick and round
     draftState.currentPick = lastPick.pickNumber;
@@ -613,6 +689,11 @@ function startTimer() {
         
         if (draftState.timeRemaining <= 0) {
             pauseTimer();
+            // Optional: Auto-skip pick when timer expires
+            // Uncomment the following lines to enable auto-skip on timeout:
+            // if (confirm('Time expired! Skip this pick?')) {
+            //     skipPick();
+            // }
         }
     }, 1000);
 }
@@ -699,6 +780,8 @@ function openTimerWindow() {
 // Event Listeners
 document.getElementById('addPick').addEventListener('click', addPick);
 
+document.getElementById('skipPick').addEventListener('click', skipPick);
+
 document.getElementById('positionSelect').addEventListener('change', (e) => {
     const selectedPosition = e.target.value;
     const playerDropdown = document.getElementById('playerSelect');
@@ -712,20 +795,49 @@ document.getElementById('playerSelect').addEventListener('keypress', (e) => {
     }
 });
 
-document.getElementById('undoPick').addEventListener('click', undoLastPick);
+document.getElementById('undoPick').addEventListener('click', () => {
+    if (checkPassword('undo last pick')) {
+        undoLastPick();
+    }
+});
 
-document.getElementById('resetDraft').addEventListener('click', resetDraft);
+document.getElementById('resetDraft').addEventListener('click', () => {
+    if (checkPassword('reset draft')) {
+        resetDraft();
+    }
+});
 
 document.getElementById('exportDraft').addEventListener('click', exportDraftToJSON);
 
 document.getElementById('importDraft').addEventListener('click', importDraftFromJSON);
 
-document.getElementById('startTimer').addEventListener('click', startTimer);
-document.getElementById('pauseTimer').addEventListener('click', pauseTimer);
-document.getElementById('resetTimer').addEventListener('click', resetTimer);
-document.getElementById('openTimerWindow').addEventListener('click', openTimerWindow);
+document.getElementById('startTimer').addEventListener('click', () => {
+    startTimer();
+});
+document.getElementById('pauseTimer').addEventListener('click', () => {
+    pauseTimer();
+});
+document.getElementById('resetTimer').addEventListener('click', () => {
+    resetTimer();
+});
+document.getElementById('openTimerWindow').addEventListener('click', () => {
+    openTimerWindow();
+});
 
-document.getElementById('applySettings').addEventListener('click', applySettings);
+document.getElementById('applySettings').addEventListener('click', () => {
+    if (checkPassword('apply settings')) {
+        applySettings();
+    }
+});
+
+// Add event listeners for companion window buttons
+document.getElementById('openTimer').addEventListener('click', () => {
+    openTimerWindow();
+});
+
+document.getElementById('openPlayers').addEventListener('click', () => {
+    window.open('players.html', 'SMFFL Players', 'width=1000,height=800');
+});
 
 // Initialize settings inputs
 document.getElementById('numTeams').value = draftState.numTeams;
@@ -761,8 +873,24 @@ function getTeamPositionCounts() {
     
     // Subtract drafted players
     draftState.picks.forEach(pick => {
-        if (counts[pick.team] && counts[pick.team][pick.position] !== undefined) {
-            counts[pick.team][pick.position] = Math.max(0, counts[pick.team][pick.position] - 1);
+        const team = pick.team;
+        const position = pick.position;
+        
+        // Check if this position belongs to a flexible group
+        let handled = false;
+        for (const [groupName, positions] of Object.entries(flexibleGroups)) {
+            if (positions.includes(position)) {
+                if (counts[team] && counts[team][groupName] !== undefined) {
+                    counts[team][groupName] = Math.max(0, counts[team][groupName] - 1);
+                    handled = true;
+                    break;
+                }
+            }
+        }
+        
+        // If not part of a flexible group, handle normally
+        if (!handled && counts[team] && counts[team][position] !== undefined) {
+            counts[team][position] = Math.max(0, counts[team][position] - 1);
         }
     });
     

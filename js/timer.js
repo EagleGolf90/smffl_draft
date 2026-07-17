@@ -2,6 +2,21 @@
 let teamNames = [];
 let teamOwners = [];
 
+// Password protection
+const ADMIN_PASSWORD = 'admin'; // Change this to your desired password
+
+function checkPassword(action = 'perform this action') {
+    const password = prompt(`Enter password to ${action}:`);
+    if (password === null) {
+        return false; // User cancelled
+    }
+    if (password !== ADMIN_PASSWORD) {
+        alert('Incorrect password!');
+        return false;
+    }
+    return true;
+}
+
 // Load team names from JSON file
 async function loadTeamNames() {
   try {
@@ -41,6 +56,8 @@ let isRunning = false;
 let soundEnabled = true;
 let timerChannel = null;
 let lastSyncTime = Date.now();
+let lastBeepTime = null; // Track last time we played a beep to prevent duplicates
+let controlledByMainWindow = false; // Track if timer is controlled by main window
 
 // Initialize BroadcastChannel for timer sync
 try {
@@ -62,7 +79,7 @@ try {
         updateDisplay();
       }
       if (!isRunning) {
-        startTimerInternal();
+        startTimerInternal(true); // true = controlled by main window
       }
     } else if (action === "pause") {
       if (newTime !== undefined) {
@@ -78,11 +95,19 @@ try {
       }
       resetTimerInternal();
     } else if (action === "sync") {
-      // Force sync time to prevent drift
+      // Force sync time to prevent drift - just update display, don't run own timer
       if (newTime !== undefined) {
         timeRemaining = newTime;
         updateDisplay();
         lastSyncTime = Date.now();
+        
+        // Ensure timer is in "running" state if receiving sync messages
+        if (!isRunning) {
+          isRunning = true;
+          controlledByMainWindow = true;
+          startBtn.textContent = "Running...";
+          startBtn.disabled = true;
+        }
       }
     } else if (action === "update-team") {
       // Update team info from main window
@@ -111,8 +136,8 @@ const rosterRequirements = {
   WR: 4,
   TE: 2,
   DP: 2,
-  DEF: 1,
-  K: 1,
+  DEF: 2,
+  K: 2
 };
 
 // Get references to elements
@@ -153,6 +178,29 @@ function playBeep(frequency = 800, duration = 200) {
   oscillator.stop(audioContext.currentTime + duration / 1000);
 }
 
+// Check and play beeps for specific time thresholds
+function checkAndPlayBeeps(currentTime) {
+  // Prevent duplicate beeps within 1 second
+  const now = Date.now();
+  if (lastBeepTime && (now - lastBeepTime) < 1000) {
+    return;
+  }
+
+  if (currentTime === 30) {
+    playBeep(600, 200);
+    lastBeepTime = now;
+  } else if (currentTime === 10) {
+    playBeep(800, 300);
+    lastBeepTime = now;
+  } else if (currentTime <= 3 && currentTime > 0) {
+    playBeep(1000, 200);
+    lastBeepTime = now;
+  } else if (currentTime === 0) {
+    playBeep(400, 1000);
+    lastBeepTime = now;
+  }
+}
+
 function formatTime(seconds) {
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
@@ -178,9 +226,12 @@ function updateDisplay() {
     statusMessage.textContent = "";
     statusMessage.classList.remove("expired");
   }
+  
+  // Check for beeps at appropriate thresholds
+  checkAndPlayBeeps(timeRemaining);
 }
 
-function startTimerInternal() {
+function startTimerInternal(controlledByMain = false) {
   if (isRunning) return;
 
   // Reset to full time limit if timer has expired or is at 0
@@ -191,26 +242,23 @@ function startTimerInternal() {
   }
 
   isRunning = true;
+  controlledByMainWindow = controlledByMain;
   startBtn.textContent = "Running...";
   startBtn.disabled = true;
   lastSyncTime = Date.now();
 
-  timerInterval = setInterval(() => {
-    timeRemaining--;
-    updateDisplay();
+  // Only run our own countdown timer if not controlled by main window
+  // If controlled by main, we rely on sync messages every second from draft.js
+  if (!controlledByMain) {
+    timerInterval = setInterval(() => {
+      timeRemaining--;
+      updateDisplay();
 
-    // Beep warnings
-    if (timeRemaining === 30) {
-      playBeep(600, 200);
-    } else if (timeRemaining === 10) {
-      playBeep(800, 300);
-    } else if (timeRemaining <= 3 && timeRemaining > 0) {
-      playBeep(1000, 200);
-    } else if (timeRemaining === 0) {
-      playBeep(400, 1000);
-      pauseTimerInternal();
-    }
-  }, 1000);
+      if (timeRemaining <= 0) {
+        pauseTimerInternal();
+      }
+    }, 1000);
+  }
 }
 
 function startTimer() {
@@ -233,7 +281,9 @@ function pauseTimerInternal() {
   if (!isRunning) return;
 
   isRunning = false;
+  controlledByMainWindow = false;
   clearInterval(timerInterval);
+  timerInterval = null;
   startBtn.textContent = "Start";
   startBtn.disabled = false;
 }
@@ -250,6 +300,7 @@ function pauseTimer() {
 
 function resetTimerInternal() {
   pauseTimerInternal();
+  controlledByMainWindow = false;
   timeRemaining = parseInt(localStorage.getItem("draftTimeLimit")) || 120;
   updateDisplay();
 }
@@ -264,14 +315,23 @@ function resetTimer() {
 }
 
 function toggleSound() {
+  if (!checkPassword('toggle sound')) {
+    return;
+  }
   soundEnabled = !soundEnabled;
   soundToggle.textContent = soundEnabled ? "🔊 Sound ON" : "🔇 Sound OFF";
 }
 
 // Event listeners
-startBtn.addEventListener("click", startTimer);
-pauseBtn.addEventListener("click", pauseTimer);
-resetBtn.addEventListener("click", resetTimer);
+startBtn.addEventListener("click", () => {
+  startTimer();
+});
+pauseBtn.addEventListener("click", () => {
+  pauseTimer();
+});
+resetBtn.addEventListener("click", () => {
+  resetTimer();
+});
 soundToggle.addEventListener("click", toggleSound);
 
 // Update positions tracker
@@ -436,6 +496,28 @@ window.addEventListener("storage", (e) => {
     updatePositionsTracker();
   }
 });
+
+// Periodic sync health check - detect if main window has stopped sending sync messages
+setInterval(() => {
+  if (controlledByMainWindow && isRunning) {
+    const timeSinceLastSync = Date.now() - lastSyncTime;
+    // If we haven't received a sync in 3 seconds, take over the countdown
+    if (timeSinceLastSync > 3000) {
+      console.log('Sync lost from main window, taking over countdown');
+      controlledByMainWindow = false;
+      // Start our own interval if we don't have one
+      if (!timerInterval) {
+        timerInterval = setInterval(() => {
+          timeRemaining--;
+          updateDisplay();
+          if (timeRemaining <= 0) {
+            pauseTimerInternal();
+          }
+        }, 1000);
+      }
+    }
+  }
+}, 1000);
 
 // Initialize from localStorage
 async function initializeTimer() {

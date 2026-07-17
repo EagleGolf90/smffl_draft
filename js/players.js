@@ -3,6 +3,21 @@ let currentFilter = 'ALL';
 let searchQuery = '';
 let draftedPlayers = [];
 
+// Password protection
+const ADMIN_PASSWORD = 'admin'; // Change this to your desired password
+
+function checkPassword(action = 'perform this action') {
+    const password = prompt(`Enter password to ${action}:`);
+    if (password === null) {
+        return false; // User cancelled
+    }
+    if (password !== ADMIN_PASSWORD) {
+        alert('Incorrect password!');
+        return false;
+    }
+    return true;
+}
+
 // DOM Elements
 const playersContainer = document.getElementById('playersContainer');
 const searchInput = document.getElementById('searchInput');
@@ -64,6 +79,7 @@ function getPositionFullName(position) {
         'WR': 'Wide Receiver',
         'TE': 'Tight End',
         'DEF': 'Defense',
+        'DP': 'Defense Player',
         'K': 'Kicker'
     };
     return positions[position] || position;
