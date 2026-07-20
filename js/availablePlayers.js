@@ -1,144 +1,27 @@
 // Available Players List
-console.log('availablePlayers.js is loading...');
-const availablePlayers = [
-    { name: "Christian McCaffrey", position: "RB" },
-    { name: "Tyreek Hill", position: "WR" },
-    { name: "CeeDee Lamb", position: "WR" },
-    { name: "Bijan Robinson", position: "RB" },
-    { name: "Breece Hall", position: "RB" },
-    { name: "Amon-Ra St. Brown", position: "WR" },
-    { name: "Justin Jefferson", position: "WR" },
-    { name: "Ja'Marr Chase", position: "WR" },
-    { name: "Saquon Barkley", position: "RB" },
-    { name: "Josh Allen", position: "QB" },
-    { name: "Patrick Mahomes", position: "QB" },
-    { name: "Lamar Jackson", position: "QB" },
-    { name: "Jalen Hurts", position: "QB" },
-    { name: "A.J. Brown", position: "WR" },
-    { name: "Garrett Wilson", position: "WR" },
-    { name: "Puka Nacua", position: "WR" },
-    { name: "Travis Kelce", position: "TE" },
-    { name: "Sam LaPorta", position: "TE" },
-    { name: "Derrick Henry", position: "RB" },
-    { name: "De'Von Achane", position: "RB" },
-    { name: "Jonathan Taylor", position: "RB" },
-    { name: "Jahmyr Gibbs", position: "RB" },
-    { name: "Kenneth Walker III", position: "RB" },
-    { name: "Kyren Williams", position: "RB" },
-    { name: "Davante Adams", position: "WR" },
-    { name: "Stefon Diggs", position: "WR" },
-    { name: "Drake London", position: "WR" },
-    { name: "Deebo Samuel", position: "WR" },
-    { name: "Chris Olave", position: "WR" },
-    { name: "Mike Evans", position: "WR" },
-    { name: "DJ Moore", position: "WR" },
-    { name: "Nico Collins", position: "WR" },
-    { name: "Brandon Aiyuk", position: "WR" },
-    { name: "Mark Andrews", position: "TE" },
-    { name: "Trey McBride", position: "TE" },
-    { name: "Dalton Kincaid", position: "TE" },
-    { name: "George Kittle", position: "TE" },
-    { name: "Kyle Pitts", position: "TE" },
-    { name: "Evan Engram", position: "TE" },
-    { name: "David Njoku", position: "TE" },
-    { name: "Joe Burrow", position: "QB" },
-    { name: "C.J. Stroud", position: "QB" },
-    { name: "Dak Prescott", position: "QB" },
-    { name: "Brock Purdy", position: "QB" },
-    { name: "Trevor Lawrence", position: "QB" },
-    { name: "Justin Herbert", position: "QB" },
-    { name: "Tua Tagovailoa", position: "QB" },
-    { name: "Anthony Richardson", position: "QB" },
-    { name: "Jordan Love", position: "QB" },
-    { name: "Geno Smith", position: "QB" },
-    { name: "Isiah Pacheco", position: "RB" },
-    { name: "James Cook", position: "RB" },
-    { name: "Rachaad White", position: "RB" },
-    { name: "Najee Harris", position: "RB" },
-    { name: "Travis Etienne Jr.", position: "RB" },
-    { name: "Aaron Jones", position: "RB" },
-    { name: "Alvin Kamara", position: "RB" },
-    { name: "Rhamondre Stevenson", position: "RB" },
-    { name: "Joe Mixon", position: "RB" },
-    { name: "D'Andre Swift", position: "RB" },
-    { name: "Javonte Williams", position: "RB" },
-    { name: "Tony Pollard", position: "RB" },
-    { name: "Zach Charbonnet", position: "RB" },
-    { name: "James Conner", position: "RB" },
-    { name: "Marvin Harrison Jr.", position: "WR" },
-    { name: "Cooper Kupp", position: "WR" },
-    { name: "Amari Cooper", position: "WR" },
-    { name: "DK Metcalf", position: "WR" },
-    { name: "Terry McLaurin", position: "WR" },
-    { name: "Calvin Ridley", position: "WR" },
-    { name: "Zay Flowers", position: "WR" },
-    { name: "Christian Kirk", position: "WR" },
-    { name: "George Pickens", position: "WR" },
-    { name: "Keenan Allen", position: "WR" },
-    { name: "Marquise Brown", position: "WR" },
-    { name: "Jaxon Smith-Njigba", position: "WR" },
-    { name: "Michael Pittman Jr.", position: "WR" },
-    { name: "DeVonta Smith", position: "WR" },
-    { name: "Diontae Johnson", position: "WR" },
-    { name: "Tyler Lockett", position: "WR" },
-    { name: "Jaylen Waddle", position: "WR" },
-    { name: "Courtland Sutton", position: "WR" },
-    { name: "Jordan Addison", position: "WR" },
-    { name: "Rashee Rice", position: "WR" },
-    { name: "Tank Dell", position: "WR" },
-    { name: "Romeo Doubs", position: "WR" },
-    { name: "Jakobi Meyers", position: "WR" },
-    { name: "Dallas Goedert", position: "TE" },
-    { name: "T.J. Hockenson", position: "TE" },
-    { name: "Jake Ferguson", position: "TE" },
-    { name: "Chigoziem Okonkwo", position: "TE" },
-    { name: "Tyler Conklin", position: "TE" },
-    { name: "Taysom Hill", position: "TE" },
-    { name: "Cole Kmet", position: "TE" },
-    { name: "Hunter Henry", position: "TE" },
-    { name: "Jonnu Smith", position: "TE" },
-    { name: "Luke Musgrave", position: "TE" },
-    { name: "49ers", position: "DEF" },
-    { name: "Ravens", position: "DEF" },
-    { name: "Cowboys", position: "DEF" },
-    { name: "Browns", position: "DEF" },
-    { name: "Bills", position: "DEF" },
-    { name: "Jets", position: "DEF" },
-    { name: "Chiefs", position: "DEF" },
-    { name: "Saints", position: "DEF" },
-    { name: "Steelers", position: "DEF" },
-    { name: "Eagles", position: "DEF" },
-    { name: "Justin Tucker", position: "K" },
-    { name: "Harrison Butker", position: "K" },
-    { name: "Jake Moody", position: "K" },
-    { name: "Tyler Bass", position: "K" },
-    { name: "Brandon Aubrey", position: "K" },
-    { name: "Jason Sanders", position: "K" },
-    { name: "Evan McPherson", position: "K" },
-    { name: "Younghoe Koo", position: "K" },
-    { name: "Cameron Dicker", position: "K" },
-    { name: "Jake Elliott", position: "K" },
-    { name: "T.J. Watt", position: "DP" },
-    { name: "Micah Parsons", position: "DP" },
-    { name: "Myles Garrett", position: "DP" },
-    { name: "Fred Warner", position: "DP" },
-    { name: "Roquan Smith", position: "DP" },
-    { name: "Patrick Surtain II", position: "DP" },
-    { name: "Sauce Gardner", position: "DP" },
-    { name: "DaRon Bland", position: "DP" },
-    { name: "Jalen Ramsey", position: "DP" },
-    { name: "Nick Bosa", position: "DP" },
-    { name: "Maxx Crosby", position: "DP" },
-    { name: "Derwin James", position: "DP" },
-    { name: "Bobby Okereke", position: "DP" },
-    { name: "Dexter Lawrence", position: "DP" },
-    { name: "Jaire Alexander", position: "DP" },
-    { name: "Zaire Franklin", position: "DP" },
-    { name: "Danielle Hunter", position: "DP" },
-    { name: "Christian Wilkins", position: "DP" },
-    { name: "Kyle Hamilton", position: "DP" },
-    { name: "Demario Davis", position: "DP" }
-];
+console.log("availablePlayers.js is loading...");
 
-console.log('availablePlayers.js loaded successfully!');
-console.log('Total players:', availablePlayers.length);
+// Declare as global variable
+let availablePlayers = [];
+
+// Load players from JSON file
+async function loadAvailablePlayers() {
+  try {
+    const response = await fetch("data/availablePlayers.json");
+    const data = await response.json();
+    availablePlayers = data;
+    console.log("availablePlayers.js loaded successfully!");
+    console.log("Total players:", availablePlayers.length);
+  } catch (error) {
+    console.error("Error loading available players:", error);
+    availablePlayers = [];
+  }
+}
+
+// Load players when the page loads
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadAvailablePlayers();
+  // Dispatch event to notify other scripts that players are ready
+  window.dispatchEvent(new CustomEvent("playersLoaded"));
+  console.log("playersLoaded event dispatched");
+});
