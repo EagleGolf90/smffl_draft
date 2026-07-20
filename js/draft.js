@@ -92,7 +92,19 @@ function initializeDraft() {
   allPlayers.push(...availablePlayers); // Copy all players
   console.log("allPlayers populated with", allPlayers.length, "players"); // Debug log
 
+  // Initialize draftState.availablePlayers now that data is loaded
+  draftState.availablePlayers = [...availablePlayers];
+
   loadDraftState();
+
+  // After loading state, rebuild availablePlayers based on drafted players
+  if (draftState.draftedPlayers && draftState.draftedPlayers.length > 0) {
+    const draftedPlayerNames = new Set(draftState.draftedPlayers);
+    draftState.availablePlayers = allPlayers.filter(
+      (player) => !draftedPlayerNames.has(player.name),
+    );
+  }
+
   updateTeamColumns(); // Create team columns first with proper names
   populatePositionDropdown();
   populatePlayerDropdown();
