@@ -3,18 +3,18 @@ let teamNames = [];
 let teamOwners = [];
 
 // Password protection
-const ADMIN_PASSWORD = 'admin'; // Change this to your desired password
+const ADMIN_PASSWORD = "admin"; // Change this to your desired password
 
-function checkPassword(action = 'perform this action') {
-    const password = prompt(`Enter password to ${action}:`);
-    if (password === null) {
-        return false; // User cancelled
-    }
-    if (password !== ADMIN_PASSWORD) {
-        alert('Incorrect password!');
-        return false;
-    }
-    return true;
+function checkPassword(action = "perform this action") {
+  const password = prompt(`Enter password to ${action}:`);
+  if (password === null) {
+    return false; // User cancelled
+  }
+  if (password !== ADMIN_PASSWORD) {
+    alert("Incorrect password!");
+    return false;
+  }
+  return true;
 }
 
 // Load team names from JSON file
@@ -100,7 +100,7 @@ try {
         timeRemaining = newTime;
         updateDisplay();
         lastSyncTime = Date.now();
-        
+
         // Ensure timer is in "running" state if receiving sync messages
         if (!isRunning) {
           isRunning = true;
@@ -124,9 +124,7 @@ try {
     }
   };
 } catch (e) {
-  console.log(
-    "BroadcastChannel not supported, using localStorage fallback",
-  );
+  console.log("BroadcastChannel not supported, using localStorage fallback");
 }
 
 // Roster requirements
@@ -136,7 +134,7 @@ const rosterRequirements = {
   WR: 4,
   DP: 2,
   DEF: 2,
-  K: 2
+  K: 2,
 };
 
 // Get references to elements
@@ -151,9 +149,7 @@ const pickNumber = document.getElementById("pickNumber");
 const roundNumber = document.getElementById("roundNumber");
 
 // Audio context for beeps
-const audioContext = new (
-  window.AudioContext || window.webkitAudioContext
-)();
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
 function playBeep(frequency = 800, duration = 200) {
   if (!soundEnabled) return;
@@ -181,7 +177,7 @@ function playBeep(frequency = 800, duration = 200) {
 function checkAndPlayBeeps(currentTime) {
   // Prevent duplicate beeps within 1 second
   const now = Date.now();
-  if (lastBeepTime && (now - lastBeepTime) < 1000) {
+  if (lastBeepTime && now - lastBeepTime < 1000) {
     return;
   }
 
@@ -225,7 +221,7 @@ function updateDisplay() {
     statusMessage.textContent = "";
     statusMessage.classList.remove("expired");
   }
-  
+
   // Check for beeps at appropriate thresholds
   checkAndPlayBeeps(timeRemaining);
 }
@@ -235,8 +231,7 @@ function startTimerInternal(controlledByMain = false) {
 
   // Reset to full time limit if timer has expired or is at 0
   if (timeRemaining <= 0) {
-    timeRemaining =
-      parseInt(localStorage.getItem("draftTimeLimit")) || 120;
+    timeRemaining = parseInt(localStorage.getItem("draftTimeLimit")) || 120;
     updateDisplay();
   }
 
@@ -263,8 +258,7 @@ function startTimerInternal(controlledByMain = false) {
 function startTimer() {
   // Reset to full time limit if timer has expired or is at 0
   if (timeRemaining <= 0) {
-    timeRemaining =
-      parseInt(localStorage.getItem("draftTimeLimit")) || 120;
+    timeRemaining = parseInt(localStorage.getItem("draftTimeLimit")) || 120;
     updateDisplay();
   }
 
@@ -314,7 +308,7 @@ function resetTimer() {
 }
 
 function toggleSound() {
-  if (!checkPassword('toggle sound')) {
+  if (!checkPassword("toggle sound")) {
     return;
   }
   soundEnabled = !soundEnabled;
@@ -338,15 +332,11 @@ function updatePositionsTracker() {
   const grid = document.getElementById("positionsGrid");
   if (!grid) return;
 
-  const draftState = JSON.parse(
-    localStorage.getItem("draftState") || "{}",
-  );
+  const draftState = JSON.parse(localStorage.getItem("draftState") || "{}");
   const numTeams = draftState.numTeams || 12;
   const picks = draftState.picks || [];
-  const currentPick =
-    parseInt(localStorage.getItem("draftCurrentPick")) || 1;
-  const currentRound =
-    parseInt(localStorage.getItem("draftCurrentRound")) || 1;
+  const currentPick = parseInt(localStorage.getItem("draftCurrentPick")) || 1;
+  const currentRound = parseInt(localStorage.getItem("draftCurrentRound")) || 1;
   const snakeOrder = draftState.snakeOrder !== false;
 
   // Calculate current team
@@ -363,10 +353,7 @@ function updatePositionsTracker() {
   }
 
   picks.forEach((pick) => {
-    if (
-      counts[pick.team] &&
-      counts[pick.team][pick.position] !== undefined
-    ) {
+    if (counts[pick.team] && counts[pick.team][pick.position] !== undefined) {
       counts[pick.team][pick.position] = Math.max(
         0,
         counts[pick.team][pick.position] - 1,
@@ -407,8 +394,7 @@ function updatePositionsTracker() {
     teamCell.className = "positions-cell team-cell";
 
     // Get team name and owner from loaded data
-    const teamName =
-      (teamNames.length > 0 && teamNames[i - 1]) || `Team ${i}`;
+    const teamName = (teamNames.length > 0 && teamNames[i - 1]) || `Team ${i}`;
     const teamOwner = (teamOwners.length > 0 && teamOwners[i - 1]) || "";
 
     // Create team name div
@@ -476,9 +462,7 @@ window.addEventListener("storage", (e) => {
   } else if (e.key === "draftTimerCommand") {
     // Fallback for browsers without BroadcastChannel
     if (!timerChannel) {
-      const storedTime = parseInt(
-        localStorage.getItem("draftTimeRemaining"),
-      );
+      const storedTime = parseInt(localStorage.getItem("draftTimeRemaining"));
       if (!isNaN(storedTime)) {
         timeRemaining = storedTime;
       }
@@ -502,7 +486,7 @@ setInterval(() => {
     const timeSinceLastSync = Date.now() - lastSyncTime;
     // If we haven't received a sync in 3 seconds, take over the countdown
     if (timeSinceLastSync > 3000) {
-      console.log('Sync lost from main window, taking over countdown');
+      console.log("Sync lost from main window, taking over countdown");
       controlledByMainWindow = false;
       // Start our own interval if we don't have one
       if (!timerInterval) {
@@ -523,12 +507,9 @@ async function initializeTimer() {
   // Load team names first
   await loadTeamNames();
 
-  teamName.textContent =
-    localStorage.getItem("draftCurrentTeam") || "Team 1";
-  pickNumber.textContent =
-    localStorage.getItem("draftCurrentPick") || "1";
-  roundNumber.textContent =
-    localStorage.getItem("draftCurrentRound") || "1";
+  teamName.textContent = localStorage.getItem("draftCurrentTeam") || "Team 1";
+  pickNumber.textContent = localStorage.getItem("draftCurrentPick") || "1";
+  roundNumber.textContent = localStorage.getItem("draftCurrentRound") || "1";
 
   const storedTimeRemaining = localStorage.getItem("draftTimeRemaining");
   const storedTimeLimit = localStorage.getItem("draftTimeLimit");
