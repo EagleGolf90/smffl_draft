@@ -18,20 +18,17 @@ function checkPassword(action = "perform this action") {
 }
 
 // Roster requirements
-// Note: WR and TE are flexible - owner needs 4 total from these positions (any combination)
 const rosterRequirements = {
   QB: 2,
   RB: 4,
-  "WR/TE": 4, // Flexible: can be 4 WR, 3 WR + 1 TE, 2 WR + 2 TE, etc.
+  WR: 4,
   K: 2,
   DEF: 2,
   DP: 2,
 };
 
 // Track which positions are part of flexible groups
-const flexibleGroups = {
-  "WR/TE": ["WR", "TE"],
-};
+const flexibleGroups = {};
 
 // Draft State
 let draftState = {

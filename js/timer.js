@@ -134,7 +134,6 @@ const rosterRequirements = {
   QB: 2,
   RB: 4,
   WR: 4,
-  TE: 2,
   DP: 2,
   DEF: 2,
   K: 2
