@@ -188,7 +188,7 @@ body {
 
 .positions-row {
   display: grid;
-  grid-template-columns: 150px repeat(7, 1fr);
+  grid-template-columns: 150px repeat(6, 1fr);
   gap: 5px;
 }
 
