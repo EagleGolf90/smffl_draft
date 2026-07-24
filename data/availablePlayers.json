@@ -9632,5 +9632,133 @@
   {
     "name": "Van Jefferson",
     "position": "WR"
+  },
+  {
+    "name": "Arizona Cardinals",
+    "position": "DEF"
+  },
+  {
+    "name": "Atlanta Falcons",
+    "position": "DEF"
+  },
+  {
+    "name": "Baltimore Ravens",
+    "position": "DEF"
+  },
+  {
+    "name": "Buffalo Bills",
+    "position": "DEF"
+  },
+  {
+    "name": "Carolina Panthers",
+    "position": "DEF"
+  },
+  {
+    "name": "Chicago Bears",
+    "position": "DEF"
+  },
+  {
+    "name": "Cincinnati Bengals",
+    "position": "DEF"
+  },
+  {
+    "name": "Cleveland Browns",
+    "position": "DEF"
+  },
+  {
+    "name": "Dallas Cowboys",
+    "position": "DEF"
+  },
+  {
+    "name": "Denver Broncos",
+    "position": "DEF"
+  },
+  {
+    "name": "Detroit Lions",
+    "position": "DEF"
+  },
+  {
+    "name": "Green Bay Packers",
+    "position": "DEF"
+  },
+  {
+    "name": "Houston Texans",
+    "position": "DEF"
+  },
+  {
+    "name": "Indianapolis Colts",
+    "position": "DEF"
+  },
+  {
+    "name": "Jacksonville Jaguars",
+    "position": "DEF"
+  },
+  {
+    "name": "Kansas City Chiefs",
+    "position": "DEF"
+  },
+  {
+    "name": "Las Vegas Raiders",
+    "position": "DEF"
+  },
+  {
+    "name": "Los Angeles Chargers",
+    "position": "DEF"
+  },
+  {
+    "name": "Los Angeles Rams",
+    "position": "DEF"
+  },
+  {
+    "name": "Miami Dolphins",
+    "position": "DEF"
+  },
+  {
+    "name": "Minnesota Vikings",
+    "position": "DEF"
+  },
+  {
+    "name": "New England Patriots",
+    "position": "DEF"
+  },
+  {
+    "name": "New Orleans Saints",
+    "position": "DEF"
+  },
+  {
+    "name": "New York Giants",
+    "position": "DEF"
+  },
+  {
+    "name": "New York Jets",
+    "position": "DEF"
+  },
+  {
+    "name": "Philadelphia Eagles",
+    "position": "DEF"
+  },
+  {
+    "name": "Pittsburgh Steelers",
+    "position": "DEF"
+  },
+  {
+    "name": "San Francisco 49ers",
+    "position": "DEF"
+  },
+  {
+    "name": "Seattle Seahawks",
+    "position": "DEF"
+  },
+  {
+    "name": "Tampa Bay Buccaneers",
+    "position": "DEF"
+  },
+  {
+    "name": "Tennessee Titans",
+    "position": "DEF"
+  },
+  {
+    "name": "Washington Commanders",
+    "position": "DEF"
   }
 ]
